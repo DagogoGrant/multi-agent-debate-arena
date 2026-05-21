@@ -6,7 +6,7 @@ import IntelligenceLab from './components/IntelligenceLab';
 import RecentDebates from './components/RecentDebates';
 import { cn } from './lib/utils';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:9000';
+const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:9000';
 
 export interface Message {
   agent: string;
