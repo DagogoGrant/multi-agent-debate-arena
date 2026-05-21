@@ -6,6 +6,8 @@ import IntelligenceLab from './components/IntelligenceLab';
 import RecentDebates from './components/RecentDebates';
 import { cn } from './lib/utils';
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:9000';
+
 export interface Message {
   agent: string;
   tag: string;
@@ -54,7 +56,7 @@ export default function App() {
     setCurrentAgent('Moderator');
 
     try {
-      const url = new URL('http://localhost:9000/api/debate');
+      const url = new URL(`${API_BASE}/api/debate`);
       url.searchParams.append('topic', topic);
       url.searchParams.append('rounds', config.rounds.toString());
       url.searchParams.append('web_grounding', config.web_grounding ? 'true' : 'false');
@@ -271,7 +273,7 @@ export default function App() {
 
   const loadDebate = async (id: string) => {
     try {
-      const res = await fetch(`http://localhost:9000/api/history/${id}`);
+      const res = await fetch(`${API_BASE}/api/history/${id}`);
       const data = await res.json();
       setTopic(data.topic);
       setMessages(data.transcript.map((t: any) => ({
