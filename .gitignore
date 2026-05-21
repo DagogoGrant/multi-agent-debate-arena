@@ -1,0 +1,20 @@
+# Logs and temporary files
+*.log
+*.pyc
+__pycache__/
+.DS_Store
+
+# Streamlit/app session files
+.streamlit/
+history/
+scratch/
+
+# Node dependencies and build files
+node_modules/
+dist/
+build/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
