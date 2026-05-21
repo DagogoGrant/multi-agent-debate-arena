@@ -1,0 +1,11 @@
+{
+  "builds": [
+    {
+      "src": "arguemind-elite/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "arguemind-elite/dist"
+      }
+    }
+  ]
+}
