@@ -7,5 +7,6 @@
         "distDir": "arguemind-elite/dist"
       }
     }
-  ]
+  ],
+  "outputDirectory": "arguemind-elite/dist"
 }
