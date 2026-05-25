@@ -47,14 +47,26 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
             <div className="text-[10px] tracking-[0.2em] text-zinc-500 uppercase font-bold mb-8">
               Multi-Agent Debate Arena
             </div>
-            <h1 className="text-5xl md:text-7xl font-medium tracking-tight mb-8 leading-[1.1] text-white">
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="text-5xl md:text-7xl font-medium tracking-tight mb-8 leading-[1.1] text-white">
               The Engine for<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-emerald-400">Bulletproof<br />Reasoning.</span>
-            </h1>
-            <p className="text-lg text-zinc-400 mb-10 max-w-xl leading-relaxed">
+            </motion.h1>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+              className="text-lg text-zinc-400 mb-10 max-w-xl leading-relaxed">
               Deploy a coalition of the world's most advanced AI models to dissect your most complex problems. Pit GPT-4, Claude, Gemini, Grok, and local models against each other in real-time to shatter echo chambers and forge bulletproof strategies.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center gap-4">
+            </motion.p>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+              className="flex flex-col sm:flex-row items-center gap-4">
               <button onClick={onLaunch} className="w-full sm:w-auto px-6 py-4 bg-violet-600 text-white rounded-sm font-semibold flex items-center justify-center gap-3 hover:bg-violet-500 transition-colors group shadow-[0_0_20px_rgba(139,92,246,0.4)]">
                 Launch Debate Canvas
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -63,11 +75,15 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                 <SquareTerminal className="w-4 h-4" />
                 View Architecture
               </button>
-            </div>
+            </motion.div>
           </div>
 
           {/* Hero Right - UI Mockup */}
-          <div className="flex-1 w-full max-w-[700px] bg-[#0A0A0A] border border-violet-500/20 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(139,92,246,0.15)] relative">
+          <motion.div 
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
+            className="flex-1 w-full max-w-[700px] bg-[#0A0A0A] border border-violet-500/20 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(139,92,246,0.15)] relative">
              {/* Mockup Header */}
              <div className="flex items-center p-4 border-b border-white/10">
                <div className="flex gap-2">
@@ -130,7 +146,7 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
                {/* Fake blur over mockup to look premium */}
                <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0A0A0A] to-transparent pointer-events-none" />
              </div>
-          </div>
+          </motion.div>
         </section>
 
         {/* TRUSTED BY / POWERED BY */}
@@ -167,13 +183,20 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
               { icon: Network, title: "Logic Network Mapping", desc: "Visualize the entire argument structure with branching attack vectors and claims." },
               { icon: Database, title: "Evidence Library", desc: "Automatically extracts and archives verified factual statements into an interactive ledger." }
             ].map((uc, i) => (
-              <div key={i} className="p-8 bg-[#0A0A0A] border border-white/5 rounded-2xl hover:border-violet-500/30 hover:bg-violet-500/[0.02] transition-colors group cursor-pointer">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                key={i} 
+                className="p-8 bg-[#0A0A0A] border border-white/5 rounded-2xl hover:border-violet-500/30 hover:bg-violet-500/[0.02] transition-colors group cursor-pointer"
+              >
                 <div className="w-8 h-8 text-zinc-400 mb-6 group-hover:text-violet-400 transition-colors">
                   {typeof uc.icon === 'function' ? <uc.icon /> : <uc.icon className="w-8 h-8" />}
                 </div>
                 <h3 className="text-xl font-medium mb-3 group-hover:text-violet-200 transition-colors">{uc.title}</h3>
                 <p className="text-sm text-zinc-500 leading-relaxed mb-8">{uc.desc}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </section>
@@ -248,14 +271,20 @@ export default function LandingPage({ onLaunch }: LandingPageProps) {
              </h2>
            </div>
            
-           <div className="relative z-10 bg-[#0A0A0A] p-8 rounded-2xl border border-violet-500/20 w-full max-w-md shadow-[0_0_30px_rgba(139,92,246,0.15)]">
+           <motion.div 
+             initial={{ opacity: 0, scale: 0.95 }}
+             whileInView={{ opacity: 1, scale: 1 }}
+             viewport={{ once: true }}
+             transition={{ duration: 0.8 }}
+             className="relative z-10 bg-[#0A0A0A] p-8 rounded-2xl border border-violet-500/20 w-full max-w-md shadow-[0_0_30px_rgba(139,92,246,0.15)]"
+           >
               <h3 className="text-lg font-medium mb-2">Start the Simulation</h3>
               <p className="text-sm text-zinc-400 mb-6">Launch the canvas and type your first strategic prompt into the system.</p>
               <button onClick={onLaunch} className="w-full px-6 py-4 bg-violet-600 text-white rounded-sm font-semibold flex items-center justify-center gap-3 hover:bg-violet-500 transition-colors group shadow-[0_0_20px_rgba(139,92,246,0.4)]">
                 Enter Arena
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
-           </div>
+           </motion.div>
         </section>
 
       </main>
