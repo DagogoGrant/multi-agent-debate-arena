@@ -20,6 +20,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+async def health_check():
+    return {"status": "online", "message": "ArgueMind Backend is running"}
+
 class AgentConfig(BaseModel):
     name: str
     role: str
