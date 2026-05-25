@@ -1,4 +1,0 @@
-{
-  "buildCommand": "cd arguemind-elite && npm install && npm run build",
-  "outputDirectory": "arguemind-elite/dist"
-}
