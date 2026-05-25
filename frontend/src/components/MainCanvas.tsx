@@ -19,7 +19,8 @@ import {
   Shield,
   Activity,
   Eye,
-  Gavel
+  Gavel,
+  Cpu
 } from 'lucide-react';
 
 const AgentIcon = ({ tag, className }: { tag: string, className?: string }) => {
