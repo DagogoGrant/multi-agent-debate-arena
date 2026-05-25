@@ -44,6 +44,21 @@ export default function SettingsModal({ isOpen, onClose, config, setConfig }: Se
   const handleAgentModelChange = (agentIndex: number, field: string, value: string) => {
     const newAgents = [...config.agents];
     newAgents[agentIndex] = { ...newAgents[agentIndex], [field]: value };
+    
+    // Automatically swap to a sane default model when the provider changes
+    if (field === 'provider') {
+      const defaultModels: Record<string, string> = {
+        'ollama': 'llama3.2:3b',
+        'openai': 'gpt-4o',
+        'anthropic': 'claude-3-5-sonnet-latest',
+        'gemini': 'gemini-2.5-flash',
+        'grok': 'grok-2-latest'
+      };
+      if (defaultModels[value]) {
+        newAgents[agentIndex].model = defaultModels[value];
+      }
+    }
+    
     setConfig({ ...config, agents: newAgents });
   };
 
