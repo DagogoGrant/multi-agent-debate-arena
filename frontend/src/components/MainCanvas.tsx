@@ -114,8 +114,38 @@ export default function MainCanvas({ messages, isStreaming, currentAgent, onCont
         {/* Chat Feed */}
         <div ref={scrollRef} className="flex-1 flex flex-col gap-4 overflow-y-auto gpu-scroll hide-scrollbar py-4 min-h-[400px]">
           {messages.length === 0 ? (
-            <div className="flex-1 flex items-center justify-center text-text-muted font-display italic">
-              Awaiting induction of argumentation stream...
+            <div className="flex-1 flex flex-col items-center justify-center h-full relative overflow-hidden min-h-[400px]">
+               {/* Outer Rotating Ring */}
+               <motion.div 
+                 animate={{ rotate: 360 }}
+                 transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                 className="absolute w-64 h-64 sm:w-80 sm:h-80 border-2 border-violet-500/20 rounded-full border-dashed"
+               />
+               {/* Inner Counter-Rotating Ring */}
+               <motion.div 
+                 animate={{ rotate: -360 }}
+                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                 className="absolute w-48 h-48 sm:w-56 sm:h-56 border border-emerald-500/20 rounded-full border-dotted"
+               />
+               {/* Center Pulsing Core */}
+               <motion.div 
+                 animate={{ scale: [0.95, 1.05, 0.95], opacity: [0.7, 1, 0.7] }}
+                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                 whileHover={{ scale: 1.15, rotate: 90 }}
+                 className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl sm:rounded-[2rem] bg-violet-500/10 border border-violet-500/30 flex items-center justify-center shadow-[0_0_50px_rgba(139,92,246,0.2)] backdrop-blur-md z-10 cursor-pointer"
+               >
+                 <Cpu className="w-8 h-8 sm:w-10 sm:h-10 text-violet-400" />
+               </motion.div>
+               
+               <motion.div
+                 initial={{ opacity: 0, y: 10 }}
+                 animate={{ opacity: 1, y: 0 }}
+                 transition={{ delay: 0.2 }}
+                 className="mt-10 sm:mt-12 text-center z-10 pointer-events-none"
+               >
+                 <h3 className="text-lg sm:text-xl font-bold text-text-main mb-2 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-emerald-400">Arena Standby Mode</h3>
+                 <p className="text-xs sm:text-sm text-text-muted">Agents are idle. Provide instructions to begin the simulation.</p>
+               </motion.div>
             </div>
           ) : (
             messages.map((msg, i) => (
