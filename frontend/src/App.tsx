@@ -6,6 +6,7 @@ import IntelligenceLab from './components/IntelligenceLab';
 import RecentDebates from './components/RecentDebates';
 import LogicMap from './components/LogicMap';
 import SettingsModal from './components/SettingsModal';
+import LandingHero from './components/LandingHero';
 import { cn } from './lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { Network, Database, Briefcase, Zap, Cpu, ArrowRight } from 'lucide-react';
@@ -39,7 +40,7 @@ export default function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [currentAgent, setCurrentAgent] = useState('');
-  const [activeView, setActiveView] = useState('canvas');
+  const [activeView, setActiveView] = useState('landing');
   const [canvasTab, setCanvasTab] = useState('arena');
   const [isSettingsOpen, setSettingsOpen] = useState(false);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
@@ -502,6 +503,20 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-background text-text-main">
+      <AnimatePresence mode="wait">
+        {activeView === 'landing' && (
+          <motion.div
+            key="landing-hero"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+            className="absolute inset-0 z-[200] bg-background"
+          >
+            <LandingHero onEnter={() => setActiveView('briefcase')} />
+          </motion.div>
+        )}
+      </AnimatePresence>
       <Header 
         onMenuClick={() => setSidebarOpen(!isSidebarOpen)} 
         onSettingsClick={() => setSettingsOpen(true)}
