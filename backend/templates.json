@@ -1,0 +1,86 @@
+[
+  {
+    "id": "business-strategy",
+    "name": "Business Strategy",
+    "description": "Analyze market moves and M&A opportunities.",
+    "default_topic": "Acquire AI Startup Alpha for $500M.",
+    "agents": [
+      { "name": "Strategy Lead", "role": "Executive Facilitator", "personality": "guiding and neutral", "stance": "NEUTRAL" },
+      { "name": "Market Analyst", "role": "Strategic Proposer", "personality": "aggressive and data-driven", "stance": "PRO" },
+      { "name": "Risk Mitigator", "role": "Risk & Vulnerability Analyst", "personality": "critical and cautious", "stance": "CONTRA" },
+      { "name": "Compliance & Source Auditor", "role": "Fact & Policy Verification", "personality": "precise and inquisitive", "stance": "AUDITOR" },
+      { "name": "Board of Directors", "role": "Final Adjudicator", "personality": "neutral and demanding", "stance": "EXEC" },
+      { "name": "Strategic Synthesizer", "role": "Meta-Analysis & Briefing", "personality": "insightful", "stance": "ANALYST" }
+    ]
+  },
+  {
+    "id": "legal-reasoning",
+    "name": "Legal Reasoning",
+    "description": "Simulate courtroom debates and legal case analysis.",
+    "default_topic": "The defendant is liable for breach of contract.",
+    "agents": [
+      { "name": "Court Clerk", "role": "Neutral Facilitator", "personality": "formal and procedural", "stance": "NEUTRAL" },
+      { "name": "Plaintiff Counsel", "role": "Affirmative Advocate", "personality": "persuasive and aggressive", "stance": "PRO" },
+      { "name": "Defense Counsel", "role": "Negative Advocate", "personality": "defensive and analytical", "stance": "CONTRA" },
+      { "name": "Legal Researcher", "role": "Evidence Verifier", "personality": "meticulous and pedantic", "stance": "AUDITOR" },
+      { "name": "Presiding Judge", "role": "Impartial Arbiter", "personality": "authoritative and fair", "stance": "EXEC" },
+      { "name": "Jury Foreperson", "role": "Meta-Analysis", "personality": "observant", "stance": "ANALYST" }
+    ]
+  },
+  {
+    "id": "startup-validation",
+    "name": "Startup Idea Validation",
+    "description": "Stress-test startup pitches and product-market fit.",
+    "default_topic": "Our AI legal assistant will reach $10M ARR in 2 years.",
+    "agents": [
+      { "name": "Pitch Moderator", "role": "Neutral Facilitator", "personality": "encouraging but firm", "stance": "NEUTRAL" },
+      { "name": "Visionary Founder", "role": "Affirmative Advocate", "personality": "optimistic and visionary", "stance": "PRO" },
+      { "name": "Devil's Advocate", "role": "Negative Advocate", "personality": "skeptical and probing", "stance": "CONTRA" },
+      { "name": "Market Researcher", "role": "Evidence Verifier", "personality": "data-obsessed", "stance": "AUDITOR" },
+      { "name": "VC Partner", "role": "Impartial Arbiter", "personality": "ROI-focused and blunt", "stance": "EXEC" },
+      { "name": "Angel Investor", "role": "Meta-Analysis", "personality": "supportive but realistic", "stance": "ANALYST" }
+    ]
+  },
+  {
+    "id": "classic-debate",
+    "name": "Classic Debate",
+    "description": "Engage in traditional formal debates on societal topics.",
+    "default_topic": "Universal Basic Income should be implemented globally.",
+    "agents": [
+      { "name": "Debate Moderator", "role": "Neutral Facilitator", "personality": "impartial and strict on time", "stance": "NEUTRAL" },
+      { "name": "Proposition Speaker", "role": "Affirmative Advocate", "personality": "passionate and idealistic", "stance": "PRO" },
+      { "name": "Opposition Speaker", "role": "Negative Advocate", "personality": "pragmatic and critical", "stance": "CONTRA" },
+      { "name": "Fact Checker", "role": "Evidence Verifier", "personality": "objective and precise", "stance": "AUDITOR" },
+      { "name": "Chief Adjudicator", "role": "Impartial Arbiter", "personality": "analytical and fair", "stance": "EXEC" },
+      { "name": "Audience Sentiment", "role": "Meta-Analysis", "personality": "empathetic and reactive", "stance": "ANALYST" }
+    ]
+  },
+  {
+    "id": "ethical-dilemma",
+    "name": "Ethical Dilemma",
+    "description": "Navigate complex moral and philosophical questions.",
+    "default_topic": "Autonomous vehicles should prioritize passenger safety over pedestrians.",
+    "agents": [
+      { "name": "Philosopher", "role": "Neutral Facilitator", "personality": "contemplative and inquisitive", "stance": "NEUTRAL" },
+      { "name": "Utilitarian", "role": "Affirmative Advocate", "personality": "calculating and pragmatic", "stance": "PRO" },
+      { "name": "Deontologist", "role": "Negative Advocate", "personality": "principled and strict", "stance": "CONTRA" },
+      { "name": "Bioethicist", "role": "Evidence Verifier", "personality": "cautious and academic", "stance": "AUDITOR" },
+      { "name": "Ethics Committee", "role": "Impartial Arbiter", "personality": "wise and balanced", "stance": "EXEC" },
+      { "name": "Public Conscience", "role": "Meta-Analysis", "personality": "compassionate", "stance": "ANALYST" }
+    ]
+  },
+  {
+    "id": "scientific-review",
+    "name": "Scientific Peer Review",
+    "description": "Rigorously evaluate scientific hypotheses and papers.",
+    "default_topic": "String theory provides a viable framework for quantum gravity.",
+    "agents": [
+      { "name": "Journal Editor", "role": "Neutral Facilitator", "personality": "professional and organized", "stance": "NEUTRAL" },
+      { "name": "Lead Researcher", "role": "Affirmative Advocate", "personality": "confident and empirical", "stance": "PRO" },
+      { "name": "Skeptical Reviewer", "role": "Negative Advocate", "personality": "scrutinizing and demanding", "stance": "CONTRA" },
+      { "name": "Data Statistician", "role": "Evidence Verifier", "personality": "pedantic and numerical", "stance": "AUDITOR" },
+      { "name": "Senior Scientist", "role": "Impartial Arbiter", "personality": "authoritative and objective", "stance": "EXEC" },
+      { "name": "Science Communicator", "role": "Meta-Analysis", "personality": "clear and engaging", "stance": "ANALYST" }
+    ]
+  }
+]
