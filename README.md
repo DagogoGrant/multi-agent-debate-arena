@@ -66,18 +66,45 @@ npm run dev
 
 ---
 
-## Production Deployment & Local Ollama
+## How to Use Your Local Ollama with the Cloud Website
 
-If you deploy the Frontend to a service like Vercel and the Backend to a service like Render/Heroku, the cloud backend will no longer be able to reach `http://localhost:11434` for Ollama.
+If you are using the live deployed website, it cannot normally access the AI models running on your personal laptop. To fix this, you must run Ollama locally and open a secure "tunnel" so the website can communicate with your computer.
 
-**How to allow cloud users to use their Local Ollama:**
-1. Start Ollama locally.
-2. Install `ngrok` and expose your Ollama port:
-   ```bash
-   ngrok http 11434
-   ```
-3. Copy the generated `https://...ngrok.io` URL.
-4. In the deployed ArgueMind web app, click the **Settings** gear icon.
-5. Paste the URL into the **Local Ollama Base URL (For ngrok/tunnels)** field.
+### Step-by-Step Guide
 
-The FastAPI backend will now seamlessly route the AI requests directly to your local machine!
+**1. Download and Install Ollama**
+- Go to [ollama.com](https://ollama.com) and download the installer for your operating system (Mac, Windows, or Linux).
+- Install the application and open your terminal/command prompt.
+- Pull a small model to test with:
+  ```bash
+  ollama pull llama3.2:3b
+  ```
+
+**2. Start Ollama with Security Bypassed**
+By default, Ollama blocks requests from external websites for security reasons. You must start it with a special command to allow the tunnel:
+- **Mac/Linux:**
+  ```bash
+  OLLAMA_ORIGINS="*" ollama serve
+  ```
+- **Windows (Command Prompt):**
+  ```cmd
+  set OLLAMA_ORIGINS="*" && ollama serve
+  ```
+*(Note: Keep this terminal window open!)*
+
+**3. Create the Secure Tunnel**
+You need to generate a public URL that forwards to your local Ollama port (`11434`). We recommend using a free **Cloudflare Tunnel**:
+- Open a **new** terminal window (do not close the Ollama one).
+- Run this exact command:
+  ```bash
+  cloudflared tunnel --url http://localhost:11434 --http-host-header="localhost"
+  ```
+  *(If you don't have cloudflared installed, you can use Pinggy via SSH: `ssh -p 443 -R0:localhost:11434 a.pinggy.io`)*
+
+**4. Connect the App**
+- Look at the terminal output from Step 3 and find the generated URL (it will look something like `https://random-words.trycloudflare.com`).
+- Open the **ArgueMind Elite** website.
+- Click the **Settings** gear icon in the menu.
+- Paste your tunnel URL into the **Local Ollama Base URL** field.
+
+The live website will now route all AI debate requests directly into your laptop's local hardware!
