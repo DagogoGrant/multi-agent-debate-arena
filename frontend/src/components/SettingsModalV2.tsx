@@ -138,34 +138,34 @@ export default function SettingsModal({ isOpen, onClose, config, setConfig }: Se
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 dark:bg-black/80">
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="w-full max-w-2xl max-h-[90vh] bg-[#0f0f11] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col font-sans"
+        className="w-full max-w-2xl max-h-[90vh] bg-card border border-divider rounded-2xl shadow-2xl overflow-hidden flex flex-col font-sans"
       >
         <div className="flex-1 overflow-y-auto p-8 space-y-6">
           
           <div className="mb-8">
-            <h2 className="text-xl font-bold text-slate-200 mb-2">Configure New Provider</h2>
-            <p className="text-sm text-slate-400">Add a new LLM provider configuration with API key and model settings.</p>
+            <h2 className="text-xl font-bold text-text-main mb-2">Configure New Provider</h2>
+            <p className="text-sm text-text-muted">Add a new LLM provider configuration with API key and model settings.</p>
           </div>
 
-          <div className="bg-black/30 border border-white/10 rounded-xl p-6 relative overflow-hidden mb-8">
+          <div className="bg-black/5 dark:bg-black/30 border border-divider rounded-xl p-6 relative overflow-hidden mb-8">
             <div className="absolute top-0 right-0 p-3 opacity-10">
               <Cloud className="w-24 h-24" />
             </div>
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-2">
-                <h3 className="text-lg font-bold text-slate-200">Google Cloud Vertex AI</h3>
+                <h3 className="text-lg font-bold text-text-main">Google Cloud Vertex AI</h3>
                 {isGoogleLinked && (
                   <span className="px-2.5 py-0.5 rounded-full bg-green-500/20 text-green-400 text-xs font-bold flex items-center gap-1">
                     <Check className="w-3 h-3" /> Connected
                   </span>
                 )}
               </div>
-              <p className="text-sm text-slate-400 mb-6 max-w-md">
+              <p className="text-sm text-text-muted mb-6 max-w-md">
                 Connect your Google Cloud account securely via OAuth to unlock powerful enterprise models like Gemini Pro without manually managing API keys.
               </p>
               <button 
@@ -188,12 +188,12 @@ export default function SettingsModal({ isOpen, onClose, config, setConfig }: Se
 
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-semibold text-slate-300 mb-2">Provider Type *</label>
+              <label className="block text-sm font-semibold text-text-main mb-2">Provider Type *</label>
               <div className="relative">
                 <select 
                   value={providerType}
                   onChange={handleProviderTypeChange}
-                  className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 appearance-none"
+                  className="w-full bg-black/5 dark:bg-black/40 border border-divider rounded-lg px-4 py-2.5 text-sm text-text-main focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 appearance-none"
                 >
                   <option value="OpenAI">OpenAI</option>
                   <option value="Anthropic">Anthropic</option>
@@ -201,49 +201,49 @@ export default function SettingsModal({ isOpen, onClose, config, setConfig }: Se
                   <option value="Ollama">Ollama</option>
                   <option value="Custom">Custom</option>
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-text-muted">
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                 </div>
               </div>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-300 mb-2">Provider Name *</label>
+              <label className="block text-sm font-semibold text-text-main mb-2">Provider Name *</label>
               <input 
                 type="text" 
                 value={providerName}
                 onChange={e => setProviderName(e.target.value)}
                 placeholder="e.g., Work OpenAI"
-                className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500"
+                className="w-full bg-black/5 dark:bg-black/40 border border-divider rounded-lg px-4 py-2.5 text-sm text-text-main placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-300 mb-2">Base URL *</label>
+            <label className="block text-sm font-semibold text-text-main mb-2">Base URL *</label>
             <input 
               type="text" 
               value={baseUrl}
               onChange={e => setBaseUrl(e.target.value)}
-              className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500"
+              className="w-full bg-black/5 dark:bg-black/40 border border-divider rounded-lg px-4 py-2.5 text-sm text-text-main focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-300 mb-2">API Key *</label>
+            <label className="block text-sm font-semibold text-text-main mb-2">API Key *</label>
             <input 
               type="password" 
               value={apiKey}
               onChange={e => setApiKey(e.target.value)}
               placeholder="Enter your API key" 
-              className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500"
+              className="w-full bg-black/5 dark:bg-black/40 border border-divider rounded-lg px-4 py-2.5 text-sm text-text-main placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500"
             />
-            <p className="text-[13px] text-slate-500 mt-2">
+            <p className="text-[13px] text-text-muted mt-2">
               Your API key is encrypted and stored locally. <a href="#" className="text-violet-400 hover:text-violet-300 hover:underline">{providerType} setup guide</a>
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-300 mb-2">Model *</label>
+            <label className="block text-sm font-semibold text-text-main mb-2">Model *</label>
             {['Custom', 'Ollama'].includes(providerType) ? (
               <>
                 <input 
@@ -252,7 +252,7 @@ export default function SettingsModal({ isOpen, onClose, config, setConfig }: Se
                   value={model}
                   onChange={e => setModel(e.target.value)}
                   placeholder="e.g., opencode-32b, deepseek-coder..."
-                  className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500"
+                  className="w-full bg-black/5 dark:bg-black/40 border border-divider rounded-lg px-4 py-2.5 text-sm text-text-main placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500"
                 />
                 {availableModels.length > 0 && (
                   <datalist id="fetched-models">
@@ -265,7 +265,7 @@ export default function SettingsModal({ isOpen, onClose, config, setConfig }: Se
                 <select 
                   value={model}
                   onChange={e => setModel(e.target.value)}
-                  className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 appearance-none"
+                  className="w-full bg-black/5 dark:bg-black/40 border border-divider rounded-lg px-4 py-2.5 text-sm text-text-muted focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 appearance-none"
                 >
                   <option value="">Select a model...</option>
                   {providerType === 'OpenAI' && (
@@ -287,60 +287,60 @@ export default function SettingsModal({ isOpen, onClose, config, setConfig }: Se
                     </>
                   )}
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-text-muted">
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                 </div>
               </div>
             )}
           </div>
 
-          <div className="pt-6 border-t border-white/10 mt-8">
-            <h3 className="text-[15px] font-semibold text-slate-200 mb-4">Model Configuration</h3>
+          <div className="pt-6 border-t border-divider mt-8">
+            <h3 className="text-[15px] font-semibold text-text-main mb-4">Model Configuration</h3>
             
             <label className="flex items-center gap-3 mb-6 cursor-pointer">
               <input 
                 type="checkbox" 
                 checked={supportsImages}
                 onChange={e => setSupportsImages(e.target.checked)}
-                className="w-5 h-5 rounded border-white/20 bg-black/40 text-violet-500 focus:ring-violet-500/50 cursor-pointer accent-violet-500"
+                className="w-5 h-5 rounded border-white/20 bg-black/5 dark:bg-black/40 text-violet-500 focus:ring-violet-500/50 cursor-pointer accent-violet-500"
               />
-              <span className="text-[15px] text-slate-300">Supports Images</span>
+              <span className="text-[15px] text-text-main">Supports Images</span>
             </label>
 
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-semibold text-slate-300 mb-2">Context Window Size</label>
+                <label className="block text-sm font-semibold text-text-main mb-2">Context Window Size</label>
                 <input 
                   type="text" 
                   value={contextWindow}
                   onChange={e => setContextWindow(e.target.value)}
-                  className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500"
+                  className="w-full bg-black/5 dark:bg-black/40 border border-divider rounded-lg px-4 py-2.5 text-sm text-text-main focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500"
                 />
-                <p className="text-[13px] text-slate-500 mt-2">Auto-filled based on model</p>
+                <p className="text-[13px] text-text-muted mt-2">Auto-filled based on model</p>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-300 mb-2">Temperature (0-2)</label>
+                <label className="block text-sm font-semibold text-text-main mb-2">Temperature (0-2)</label>
                 <input 
                   type="text" 
                   value={temperature}
                   onChange={e => setTemperature(e.target.value)}
-                  className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500"
+                  className="w-full bg-black/5 dark:bg-black/40 border border-divider rounded-lg px-4 py-2.5 text-sm text-text-main focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500"
                 />
-                <p className="text-[13px] text-slate-500 mt-2">Controls response randomness</p>
+                <p className="text-[13px] text-text-muted mt-2">Controls response randomness</p>
               </div>
             </div>
           </div>
           
           <div className="flex justify-end gap-3 items-center mt-10">
-            <button onClick={onClose} className="px-5 py-2.5 rounded-lg text-sm font-semibold bg-white/5 border border-white/10 hover:bg-white/10 text-slate-200 transition-colors">
+            <button onClick={onClose} className="px-5 py-2.5 rounded-lg text-sm font-semibold bg-black/5 dark:bg-white/5 border border-divider hover:bg-white/10 text-text-main transition-colors">
               Cancel
             </button>
             <button 
               onClick={handleTestConnection}
               disabled={testStatus === 'testing' || !baseUrl}
-              className="px-5 py-2.5 rounded-lg text-sm font-semibold bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 flex items-center justify-center min-w-[80px] transition-colors"
+              className="px-5 py-2.5 rounded-lg text-sm font-semibold bg-black/5 dark:bg-white/5 border border-divider hover:bg-white/10 text-text-main flex items-center justify-center min-w-[80px] transition-colors"
             >
-              {testStatus === 'testing' ? <Loader2 className="w-4 h-4 animate-spin text-slate-400" /> : 
+              {testStatus === 'testing' ? <Loader2 className="w-4 h-4 animate-spin text-text-muted" /> : 
                testStatus === 'success' ? <span className="text-green-400">Valid</span> : 
                testStatus === 'error' ? <span className="text-red-400">Failed</span> : 
                "Test"}
