@@ -36,35 +36,45 @@ export default function ExecutiveBrief({ messages, isStreaming }: ExecutiveBrief
 
   // Attempt to parse out structured data if it exists, otherwise fallback to raw markdown rendering
   const parseConfidence = (text: string) => {
-    const match = text.match(/confidence:?\s*(\d+)%/i);
-    return match ? match[1] + '%' : 'Pending';
+    // Look for explicit "confidence: X%"
+    let match = text.match(/confidence:?\s*(\d+)%/i);
+    if (match) return match[1] + '%';
+    
+    // Look for a score like "85-78" and take the higher one as an approximate confidence
+    match = text.match(/\b(\d{2,3})-(\d{2,3})\b/);
+    if (match) {
+      const score = Math.max(parseInt(match[1]), parseInt(match[2]));
+      return score <= 100 ? score + '%' : 'Pending';
+    }
+    
+    return 'Pending';
   };
 
   const confidence = parseConfidence(synthMessage.text);
   
   // Split the text into sections if possible, otherwise just show the whole thing in a nice container
   return (
-    <div className="flex-1 overflow-y-auto p-4 sm:p-8 h-full bg-[#050505]">
+    <div className="flex-1 overflow-y-auto p-4 sm:p-8 h-full bg-background">
       <div className="max-w-4xl mx-auto space-y-8">
         
         {/* Header Dashboard */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="col-span-1 md:col-span-2 bg-violet-500/10 border border-violet-500/20 rounded-3xl p-6 flex flex-col justify-center">
             <div className="flex items-center gap-2 mb-2">
-              <ShieldCheck className="w-5 h-5 text-violet-400" />
-              <h3 className="text-xs font-bold uppercase tracking-widest text-violet-400">Final Verdict</h3>
+              <ShieldCheck className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+              <h3 className="text-xs font-bold uppercase tracking-widest text-violet-600 dark:text-violet-400">Final Verdict</h3>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-semibold text-white mt-2">
+            <h1 className="text-2xl sm:text-3xl font-semibold text-text-main mt-2">
               Strategic Recommendation
             </h1>
-            <p className="text-sm text-violet-200/60 mt-2">
+            <p className="text-sm text-violet-800/80 dark:text-violet-200/60 mt-2">
               Based on the synthesized analysis of all agent arguments.
             </p>
           </div>
           
           <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-3xl p-6 flex flex-col items-center justify-center text-center">
-            <div className="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-2">Overall Confidence</div>
-            <div className="text-4xl sm:text-5xl font-bold text-white tracking-tight">{confidence}</div>
+            <div className="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-2">Overall Confidence</div>
+            <div className="text-4xl sm:text-5xl font-bold text-text-main tracking-tight">{confidence}</div>
             <div className="w-full h-1.5 bg-emerald-500/20 rounded-full mt-4 overflow-hidden">
               <div 
                 className="h-full bg-emerald-500 rounded-full" 
@@ -80,7 +90,7 @@ export default function ExecutiveBrief({ messages, isStreaming }: ExecutiveBrief
             <Lightbulb className="w-5 h-5 text-text-muted" />
             <h2 className="text-lg font-bold text-text-main">Synthesis Report</h2>
           </div>
-          <div className="prose prose-invert prose-violet max-w-none prose-sm sm:prose-base leading-relaxed">
+          <div className="prose dark:prose-invert prose-violet max-w-none prose-sm sm:prose-base leading-relaxed text-text-main">
             <ReactMarkdown>{synthMessage.text}</ReactMarkdown>
           </div>
         </div>

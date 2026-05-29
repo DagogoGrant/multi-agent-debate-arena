@@ -56,40 +56,40 @@ const ArgumentCard = ({ msg, index, allMessages }: { msg: Message, index: number
   const attackers = findAttackers();
 
   return (
-    <div className="bg-[#0f0f11] border border-white/10 rounded-2xl overflow-hidden hover:border-violet-500/50 transition-colors">
-      <div className="p-5 border-b border-white/5 bg-white/[0.02]">
+    <div className="bg-card border border-divider rounded-2xl overflow-hidden hover:border-violet-500/50 transition-colors shadow-sm">
+      <div className="p-5 border-b border-divider bg-black/[0.02] dark:bg-white/[0.02]">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-8 h-8 rounded-full border border-white/10 bg-white/5 flex items-center justify-center shrink-0">
-            <AgentIcon tag={msg.tag} className="w-4 h-4 text-zinc-400" />
+          <div className="w-8 h-8 rounded-full border border-divider bg-black/5 dark:bg-white/5 flex items-center justify-center shrink-0">
+            <AgentIcon tag={msg.tag} className="w-4 h-4 text-text-muted" />
           </div>
           <div>
-            <h3 className="font-bold text-slate-200">{msg.agent}</h3>
-            <span className="text-[10px] uppercase tracking-widest text-slate-500">{msg.tag}</span>
+            <h3 className="font-bold text-text-main">{msg.agent}</h3>
+            <span className="text-[10px] uppercase tracking-widest text-text-muted">{msg.tag}</span>
           </div>
         </div>
         
         <div className="space-y-4">
           <div>
-            <div className="text-[10px] uppercase tracking-widest text-violet-400 font-bold mb-1">Core Claim</div>
-            <p className="text-sm text-slate-300 font-medium">{claim}</p>
+            <div className="text-[10px] uppercase tracking-widest text-violet-600 dark:text-violet-400 font-bold mb-1">Core Claim</div>
+            <p className="text-sm text-text-main font-medium">{claim}</p>
           </div>
           
           <div className="flex items-center gap-6">
             <div>
-              <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-1">Confidence</div>
-              <span className={cn("text-sm font-bold", confidence !== 'N/A' ? "text-emerald-400" : "text-slate-400")}>
+              <div className="text-[10px] uppercase tracking-widest text-text-muted font-bold mb-1">Confidence</div>
+              <span className={cn("text-sm font-bold", confidence !== 'N/A' ? "text-emerald-600 dark:text-emerald-400" : "text-text-muted")}>
                 {confidence}
               </span>
             </div>
             {attackers.length > 0 && (
               <div>
-                <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-1">Attacked By</div>
-                <span className="text-sm font-bold text-red-400">{attackers.join(', ')}</span>
+                <div className="text-[10px] uppercase tracking-widest text-text-muted font-bold mb-1">Attacked By</div>
+                <span className="text-sm font-bold text-red-600 dark:text-red-400">{attackers.join(', ')}</span>
               </div>
             )}
             <div className="ml-auto">
-              <div className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-1">Status</div>
-              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400">Under Review</span>
+              <div className="text-[10px] uppercase tracking-widest text-text-muted font-bold mb-1">Status</div>
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">Under Review</span>
             </div>
           </div>
         </div>
@@ -97,7 +97,7 @@ const ArgumentCard = ({ msg, index, allMessages }: { msg: Message, index: number
       
       <button 
         onClick={() => setExpanded(!expanded)}
-        className="w-full p-3 flex items-center justify-center gap-2 text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+        className="w-full p-3 flex items-center justify-center gap-2 text-xs font-bold text-text-muted hover:text-text-main hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
       >
         {expanded ? (
           <><ChevronUp className="w-4 h-4" /> Collapse Argument</>
@@ -107,8 +107,8 @@ const ArgumentCard = ({ msg, index, allMessages }: { msg: Message, index: number
       </button>
 
       {expanded && (
-        <div className="p-5 border-t border-white/5 bg-black/40">
-          <div className="prose prose-invert max-w-none prose-sm leading-relaxed text-slate-300">
+        <div className="p-5 border-t border-divider bg-black/[0.03] dark:bg-black/40">
+          <div className="prose dark:prose-invert max-w-none prose-sm leading-relaxed text-text-main">
             <ReactMarkdown>{msg.text}</ReactMarkdown>
           </div>
         </div>
@@ -130,11 +130,11 @@ export default function ArgumentCards({ messages }: ArgumentCardsProps) {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 sm:p-8 h-full bg-[#050505]">
+    <div className="flex-1 overflow-y-auto p-4 sm:p-8 h-full bg-background">
       <div className="max-w-5xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-white mb-2">Structured Arguments</h1>
-          <p className="text-slate-400 text-sm">Expand individual cards to read the full context and evidence.</p>
+          <h1 className="text-2xl font-bold text-text-main mb-2">Structured Arguments</h1>
+          <p className="text-text-muted text-sm">Expand individual cards to read the full context and evidence.</p>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
