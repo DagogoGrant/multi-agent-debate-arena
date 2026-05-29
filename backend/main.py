@@ -34,7 +34,11 @@ async def proxy_models(request: Request):
             return {"error": "base_url required"}
             
         url = f"{base_url.rstrip('/')}/models"
-        req = urllib.request.Request(url, headers={"Authorization": f"Bearer {api_key}"})
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        }
+        req = urllib.request.Request(url, headers=headers)
         
         with urllib.request.urlopen(req, timeout=10) as response:
             result = json.loads(response.read().decode('utf-8'))
