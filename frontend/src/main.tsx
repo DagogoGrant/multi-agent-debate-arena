@@ -7,7 +7,9 @@ import React, { useState } from 'react';
 import LandingPage from './components/LandingPage';
 
 function RootApp() {
-  const [showLanding, setShowLanding] = useState(true);
+  // Skip landing page if we have a token or are returning from OAuth
+  const hasToken = !!localStorage.getItem('auth_token') || window.location.hash.includes('access_token=');
+  const [showLanding, setShowLanding] = useState(!hasToken);
 
   if (showLanding) {
     return <LandingPage onLaunch={() => setShowLanding(false)} />;
