@@ -119,7 +119,9 @@ async def signup(user_data: UserAuth, db: Session = Depends(get_db)):
     try:
         user = db.query(models.User).filter(models.User.email == user_data.email).first()
         if user:
-            raise HTTPException(status_code=400, detail="Email already registered")
+            if not user.hashed_password:
+                raise HTTPException(status_code=400, detail="Account exists! Please 'Continue with Google' to log in.")
+            raise HTTPException(status_code=400, detail="Account already exists. Please switch to Log In.")
             
         hashed_pwd = get_password_hash(user_data.password)
         default_name = user_data.email.split('@')[0]
@@ -144,13 +146,15 @@ async def signup(user_data: UserAuth, db: Session = Depends(get_db)):
 
 @auth_router.post("/login")
 async def login(user_data: UserAuth, db: Session = Depends(get_db)):
-    """Handles standard email/password login"""
     user = db.query(models.User).filter(models.User.email == user_data.email).first()
-    if not user or not user.hashed_password:
-        raise HTTPException(status_code=401, detail="Incorrect email or password")
+    if not user:
+        raise HTTPException(status_code=401, detail="Account not found. Please Sign Up first!")
+        
+    if not user.hashed_password:
+        raise HTTPException(status_code=401, detail="Please use 'Continue with Google' to log in.")
         
     if not verify_password(user_data.password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="Incorrect email or password")
+        raise HTTPException(status_code=401, detail="Incorrect password.")
         
     access_token = create_access_token(
         data={"sub": user.email}, expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
