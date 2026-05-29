@@ -8,14 +8,20 @@ export default function LoginScreen() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
     
+    if (!isLogin && password !== confirmPassword) {
+      setError("Passwords do not match!");
+      return;
+    }
+
+    setLoading(true);
     try {
       if (isLogin) {
         await emailLogin(email, password);
@@ -99,6 +105,27 @@ export default function LoginScreen() {
                   className="w-full bg-black/40 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-all"
                 />
               </div>
+
+              {!isLogin && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="relative overflow-hidden"
+                >
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Key className="w-4 h-4 text-slate-500" />
+                  </div>
+                  <input 
+                    type="password" 
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm Password"
+                    required={!isLogin}
+                    className="w-full bg-black/40 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-all"
+                  />
+                </motion.div>
+              )}
             </div>
 
             <button 
