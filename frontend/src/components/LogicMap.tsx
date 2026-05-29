@@ -102,7 +102,7 @@ export default function LogicMap({ messages, topic = "Strategic Intelligence Pro
                       x2={`calc(50% + ${x}px)`} y2={`calc(50% + ${y}px)`} 
                       stroke="currentColor" 
                       strokeWidth="1.5"
-                      className="text-white/10 dark:text-white/5"
+                      className="text-slate-300 dark:text-slate-700"
                     />
                   </svg>
 
