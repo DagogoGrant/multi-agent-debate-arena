@@ -29,6 +29,14 @@ try:
 except Exception:
     pass
 
+# Hotfix: Add sharing columns if they don't exist
+try:
+    with engine.begin() as conn:
+        conn.execute(text("ALTER TABLE debate_sessions ADD COLUMN is_public BOOLEAN DEFAULT 0"))
+        conn.execute(text("ALTER TABLE debate_sessions ADD COLUMN share_id VARCHAR"))
+except Exception:
+    pass
+
 app.include_router(auth_router)
 
 # Enable CORS for the React frontend
@@ -116,6 +124,34 @@ async def get_debate_detail(debate_id: int, current_user: models.User = Depends(
     session = db.query(models.DebateSession).filter(models.DebateSession.id == debate_id, models.DebateSession.user_id == current_user.id).first()
     if not session:
         return {"error": "Debate not found"}
+        
+    return {
+        "topic": session.topic,
+        "transcript": json.loads(session.transcript) if session.transcript else [],
+        "share_id": session.share_id,
+        "is_public": session.is_public
+    }
+
+import uuid
+
+@app.post("/api/history/{debate_id}/share")
+async def share_debate(debate_id: int, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    session = db.query(models.DebateSession).filter(models.DebateSession.id == debate_id, models.DebateSession.user_id == current_user.id).first()
+    if not session:
+        return {"error": "Debate not found"}
+    
+    if not session.share_id:
+        session.share_id = str(uuid.uuid4())[:8]
+    session.is_public = True
+    db.commit()
+    
+    return {"share_id": session.share_id, "is_public": session.is_public}
+
+@app.get("/api/share/{share_id}")
+async def get_shared_debate(share_id: str, db: Session = Depends(get_db)):
+    session = db.query(models.DebateSession).filter(models.DebateSession.share_id == share_id, models.DebateSession.is_public == True).first()
+    if not session:
+        return {"error": "Shared debate not found"}
         
     return {
         "topic": session.topic,

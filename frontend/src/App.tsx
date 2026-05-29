@@ -48,6 +48,8 @@ function AppContent() {
   const [canvasTab, setCanvasTab] = useState('arena');
   const [isSettingsOpen, setSettingsOpen] = useState(false);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
+  const [currentDebateId, setCurrentDebateId] = useState<string | null>(null);
+  const [shareId, setShareId] = useState<string | null>(null);
 
   React.useEffect(() => {
     if (theme === 'dark') {
@@ -405,6 +407,9 @@ function AppContent() {
       });
       const data = await res.json();
       setTopic(data.topic);
+      setCurrentDebateId(id);
+      setShareId(data.share_id || null);
+      
       setMessages(data.transcript.map((t: any) => ({
         agent: t[0],
         text: t[1],
@@ -522,6 +527,26 @@ function AppContent() {
     }
   };
 
+  const handleShare = async () => {
+    if (!currentDebateId || !token) return;
+    try {
+      const res = await fetch(`${API_BASE}/api/history/${currentDebateId}/share`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.share_id) {
+        setShareId(data.share_id);
+        const link = `${window.location.origin}/share/${data.share_id}`;
+        navigator.clipboard.writeText(link);
+        alert(`Share link copied to clipboard!\n${link}`);
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Failed to share debate.');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0A0A0C] flex items-center justify-center">
@@ -610,6 +635,8 @@ function AppContent() {
                       isStreaming={isStreaming}
                       currentAgent={currentAgent}
                       onContinue={handleStartDebate}
+                      onShare={currentDebateId ? handleShare : undefined}
+                      shareId={shareId}
                     />
                   ) : canvasTab === 'lab' ? (
                      <IntelligenceLab metrics={metrics} />

@@ -20,7 +20,8 @@ import {
   Activity,
   Eye,
   Gavel,
-  Cpu
+  Cpu,
+  Share2
 } from 'lucide-react';
 
 const AgentIcon = ({ tag, className }: { tag: string, className?: string }) => {
@@ -53,9 +54,11 @@ interface MainCanvasProps {
   isStreaming: boolean;
   currentAgent: string;
   onContinue: () => void;
+  onShare?: () => void;
+  shareId?: string | null;
 }
 
-export default function MainCanvas({ messages, isStreaming, currentAgent, onContinue }: MainCanvasProps) {
+export default function MainCanvas({ messages, isStreaming, currentAgent, onContinue, onShare, shareId }: MainCanvasProps) {
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -260,21 +263,32 @@ export default function MainCanvas({ messages, isStreaming, currentAgent, onCont
                  <Pause className="w-4 h-4 sm:w-5 h-5" />
                </button>
              </div>
-             <button 
-               onClick={() => {
-                 const content = `# Strategic Intelligence Brief\n\n` + 
-                   messages.map(m => `### ${m.agent} (${m.tag})\n${m.text}\n\n---\n\n`).join('');
-                 const blob = new Blob([content], { type: 'text/markdown' });
-                 const url = URL.createObjectURL(blob);
-                 const a = document.createElement('a');
-                 a.href = url;
-                 a.download = `Strategy_Brief_${new Date().toISOString().slice(0,10)}.md`;
-                 a.click();
-               }}
-               className="px-3 sm:px-4 h-8 sm:h-10 rounded-xl sm:rounded-2xl border border-divider bg-black/5 dark:bg-white/5 text-[10px] sm:text-xs font-bold text-text-muted flex items-center gap-2 hover:text-text-main transition-colors"
-             >
-               <FileText className="w-3.5 h-3.5 sm:w-4 h-4" /> Generate Brief
-             </button>
+             <div className="flex items-center gap-2">
+               {onShare && (
+                 <button 
+                   onClick={onShare}
+                   className="px-3 sm:px-4 h-8 sm:h-10 rounded-xl sm:rounded-2xl border border-violet-500/30 bg-violet-500/10 text-[10px] sm:text-xs font-bold text-violet-400 flex items-center gap-2 hover:bg-violet-500/20 transition-colors"
+                 >
+                   <Share2 className="w-3.5 h-3.5 sm:w-4 h-4" /> 
+                   {shareId ? 'Copy Share Link' : 'Share Debate'}
+                 </button>
+               )}
+               <button 
+                 onClick={() => {
+                   const content = `# Strategic Intelligence Brief\n\n` + 
+                     messages.map(m => `### ${m.agent} (${m.tag})\n${m.text}\n\n---\n\n`).join('');
+                   const blob = new Blob([content], { type: 'text/markdown' });
+                   const url = URL.createObjectURL(blob);
+                   const a = document.createElement('a');
+                   a.href = url;
+                   a.download = `Strategy_Brief_${new Date().toISOString().slice(0,10)}.md`;
+                   a.click();
+                 }}
+                 className="px-3 sm:px-4 h-8 sm:h-10 rounded-xl sm:rounded-2xl border border-divider bg-black/5 dark:bg-white/5 text-[10px] sm:text-xs font-bold text-text-muted flex items-center gap-2 hover:text-text-main transition-colors"
+               >
+                 <FileText className="w-3.5 h-3.5 sm:w-4 h-4" /> Generate Brief
+               </button>
+             </div>
           </div>
         </div>
       </div>

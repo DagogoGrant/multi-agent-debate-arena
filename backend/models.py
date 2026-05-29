@@ -36,4 +36,8 @@ class DebateSession(Base):
     transcript = Column(String) # Stored as JSON string
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     
+    # Sharing features
+    is_public = Column(Boolean, default=False)
+    share_id = Column(String, unique=True, index=True, nullable=True)
+    
     user = relationship("User", back_populates="debates")
