@@ -5,7 +5,7 @@ import MainCanvas from './components/MainCanvas';
 import IntelligenceLab from './components/IntelligenceLab';
 import RecentDebates from './components/RecentDebates';
 import LogicMap from './components/LogicMap';
-import SettingsModal from './components/SettingsModal';
+import SettingsModal from './components/SettingsModalV2';
 import { cn } from './lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { Network, Database, Briefcase, Zap, Cpu, ArrowRight } from 'lucide-react';
@@ -102,18 +102,29 @@ export default function App() {
       const anthropicKey = localStorage.getItem('anthropic_api_key');
       const geminiKey = localStorage.getItem('gemini_api_key');
       const grokKey = localStorage.getItem('grok_api_key');
+      const customKey = localStorage.getItem('custom_api_key');
+      const customBaseUrl = localStorage.getItem('custom_base_url');
       const ollamaBaseUrl = localStorage.getItem('ollama_base_url') || 'http://localhost:11434';
       
       const configuredAgents = config.agents.map((agent: any) => {
          let key = "";
          let baseUrl = null;
-         if (agent.provider === 'openai') key = openaiKey || "";
-         if (agent.provider === 'anthropic') key = anthropicKey || "";
-         if (agent.provider === 'gemini') key = geminiKey || "";
-         if (agent.provider === 'grok') key = grokKey || "";
-         if (agent.provider === 'ollama' || !agent.provider) baseUrl = ollamaBaseUrl;
+         let provider = agent.provider;
          
-         return { ...agent, api_key: key, base_url: baseUrl };
+         if (provider === 'openai') key = openaiKey || "";
+         if (provider === 'anthropic') key = anthropicKey || "";
+         if (provider === 'gemini') key = geminiKey || "";
+         if (provider === 'grok') key = grokKey || "";
+         
+         if (provider === 'custom') {
+             provider = 'openai'; // LiteLLM handles OpenAI compatible under openai provider
+             key = customKey || "";
+             baseUrl = customBaseUrl || null;
+         } else if (provider === 'ollama' || !provider) {
+             baseUrl = ollamaBaseUrl;
+         }
+         
+         return { ...agent, provider, api_key: key, base_url: baseUrl };
       });
 
       const response = await fetch(`${API_BASE}/api/debate`, {

@@ -45,9 +45,12 @@ class LLMClient:
             "stream": stream,
         }
         
-        if provider == "ollama":
-            kwargs["api_base"] = base_url or self.base_url
-        if api_key and provider != "ollama":
+        if base_url:
+            kwargs["api_base"] = base_url
+        elif provider == "ollama":
+            kwargs["api_base"] = self.base_url
+            
+        if api_key:
             kwargs["api_key"] = api_key
 
         print(f"DEBUG: LiteLLM Request: model={litellm_model}, provider={provider}, stream={stream}")
