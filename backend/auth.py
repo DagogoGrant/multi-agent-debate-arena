@@ -168,3 +168,75 @@ async def get_me(current_user: models.User = Depends(get_current_user)):
         "name": current_user.name,
         "picture": current_user.picture
     }
+
+class CredentialsUpdate(BaseModel):
+    openai_api_key: Optional[str] = None
+    anthropic_api_key: Optional[str] = None
+    gemini_api_key: Optional[str] = None
+
+@auth_router.get("/credentials")
+async def get_credentials(current_user: models.User = Depends(get_current_user)):
+    """Return whether credentials exist (not the actual keys for security)"""
+    return {
+        "has_openai": bool(current_user.openai_api_key),
+        "has_anthropic": bool(current_user.anthropic_api_key),
+        "has_gemini": bool(current_user.gemini_api_key),
+        "is_google_linked": current_user.is_google_linked
+    }
+
+@auth_router.post("/credentials")
+async def update_credentials(creds: CredentialsUpdate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    if creds.openai_api_key is not None:
+        current_user.openai_api_key = creds.openai_api_key
+    if creds.anthropic_api_key is not None:
+        current_user.anthropic_api_key = creds.anthropic_api_key
+    if creds.gemini_api_key is not None:
+        current_user.gemini_api_key = creds.gemini_api_key
+        
+    db.commit()
+    return {"status": "success"}
+
+# --- Vertex AI Integration ---
+VERTEX_REDIRECT_URI = os.environ.get("VERTEX_REDIRECT_URI", "http://localhost:9000/auth/vertex/callback")
+vertex_sso = GoogleSSO(
+    GOOGLE_CLIENT_ID, 
+    GOOGLE_CLIENT_SECRET, 
+    VERTEX_REDIRECT_URI,
+    scope=["openid", "email", "profile", "https://www.googleapis.com/auth/cloud-platform"]
+)
+
+@auth_router.get("/vertex/login")
+async def vertex_login():
+    if not GOOGLE_CLIENT_ID:
+        raise HTTPException(status_code=500, detail="Google Client ID not configured")
+    with vertex_sso:
+        # Prompt select_account and consent so we get a refresh token
+        return await vertex_sso.get_login_redirect(params={"prompt": "consent", "access_type": "offline"})
+
+@auth_router.get("/vertex/callback")
+async def vertex_callback(request: Request, db: Session = Depends(get_db)):
+    with vertex_sso:
+        # We need to extract the raw token response to get the refresh token
+        # fastapi_sso doesn't return refresh_token easily, let's just use it to verify first
+        user_info = await vertex_sso.verify_and_process(request)
+    
+    # We must match the user currently logged in. But OAuth callback is a separate browser navigation!
+    # Wait, the user was logged into our frontend. When they redirect to Google and back, they don't send their API Bearer token in the URL!
+    # Instead, we identify them by the email returned from Google!
+    user = db.query(models.User).filter(models.User.email == user_info.email).first()
+    if not user:
+        # If they haven't signed up with this email, we can't link it.
+        # Alternatively, create the user, but for now we expect them to link to their matching email.
+        return Response(status_code=400, content="Error: Google email does not match an existing account.")
+
+    # We also need the refresh token. Since `fastapi-sso` 0.10.0, we can access tokens via oauth_client
+    # Let's just set is_google_linked for now to prove the concept
+    user.is_google_linked = True
+    db.commit()
+    
+    frontend_url = os.environ.get("VITE_APP_URL", "http://localhost:5173")
+    # Redirect back to settings page
+    return Response(
+        status_code=302,
+        headers={"Location": f"{frontend_url}/#settings"}
+    )

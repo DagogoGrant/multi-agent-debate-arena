@@ -122,8 +122,10 @@ async def get_debate_detail(debate_id: str):
     with open(file_path, "r") as file:
         return json.load(file)
 
+from auth import get_current_user
+
 @app.post("/api/debate")
-async def debate_stream(config: SessionConfig):
+async def debate_stream(config: SessionConfig, current_user: models.User = Depends(get_current_user)):
     async def event_generator():
         print(f"DEBUG: Starting event generator for topic: {config.topic}")
         
@@ -138,17 +140,26 @@ async def debate_stream(config: SessionConfig):
             knowledge = WebSearcher.search_topic(config.topic)
         
         # 3. Initialize Dynamic Agents
-        dynamic_agents = [
-            DynamicAgent(
-                name=a.name, 
-                role=a.role, 
-                personality=a.personality, 
-                stance=a.stance, 
-                model_config={"provider": a.provider, "model": a.model, "api_key": a.api_key, "base_url": a.base_url},
-                knowledge=knowledge
-            ) 
-            for a in config.agents
-        ]
+        dynamic_agents = []
+        for a in config.agents:
+            api_key = a.api_key
+            if a.provider == 'openai' and not api_key:
+                api_key = current_user.openai_api_key
+            elif a.provider == 'anthropic' and not api_key:
+                api_key = current_user.anthropic_api_key
+            elif a.provider == 'gemini' and not api_key:
+                api_key = current_user.gemini_api_key
+                
+            dynamic_agents.append(
+                DynamicAgent(
+                    name=a.name, 
+                    role=a.role, 
+                    personality=a.personality, 
+                    stance=a.stance, 
+                    model_config={"provider": a.provider, "model": a.model, "api_key": api_key, "base_url": a.base_url},
+                    knowledge=knowledge
+                )
+            )
         
         transcript = []
 

@@ -38,7 +38,7 @@ import LoginScreen from './components/LoginScreen';
 import { Loader2 } from 'lucide-react';
 
 function AppContent() {
-  const { user, loading } = useAuth();
+  const { user, token, loading } = useAuth();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [topic, setTopic] = useState('Acquire AI Startup Alpha for $500M.');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -138,7 +138,8 @@ function AppContent() {
         headers: { 
           'Accept': 'text/event-stream',
           'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache'
+          'Cache-Control': 'no-cache',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           topic,
