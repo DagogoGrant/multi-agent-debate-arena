@@ -6,9 +6,24 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from fastapi_sso.sso.google import GoogleSSO
+from pydantic import BaseModel
+from passlib.context import CryptContext
 
 from database import get_db
 import models
+
+# Password Hashing setup
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+def get_password_hash(password):
+    return pwd_context.hash(password)
+
+class UserAuth(BaseModel):
+    email: str
+    password: str
 
 # JWT Configuration
 SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "super-secret-key-change-this-in-production")
@@ -96,6 +111,46 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
         status_code=302,
         headers={"Location": f"{frontend_url}/#access_token={access_token}"}
     )
+
+@auth_router.post("/signup")
+async def signup(user_data: UserAuth, db: Session = Depends(get_db)):
+    """Handles standard email/password signup"""
+    user = db.query(models.User).filter(models.User.email == user_data.email).first()
+    if user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+        
+    hashed_pwd = get_password_hash(user_data.password)
+    # Give them a default name based on their email prefix
+    default_name = user_data.email.split('@')[0]
+    
+    new_user = models.User(
+        email=user_data.email,
+        name=default_name.capitalize(),
+        hashed_password=hashed_pwd
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    
+    access_token = create_access_token(
+        data={"sub": new_user.email}, expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@auth_router.post("/login")
+async def login(user_data: UserAuth, db: Session = Depends(get_db)):
+    """Handles standard email/password login"""
+    user = db.query(models.User).filter(models.User.email == user_data.email).first()
+    if not user or not user.hashed_password:
+        raise HTTPException(status_code=401, detail="Incorrect email or password")
+        
+    if not verify_password(user_data.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Incorrect email or password")
+        
+    access_token = create_access_token(
+        data={"sub": user.email}, expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
 
 @auth_router.get("/me")
 async def get_me(current_user: models.User = Depends(get_current_user)):

@@ -12,6 +12,8 @@ interface AuthContextType {
   loading: boolean;
   login: () => void;
   logout: () => void;
+  emailLogin: (email: string, pass: string) => Promise<void>;
+  emailSignup: (email: string, pass: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -20,6 +22,8 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   login: () => {},
   logout: () => {},
+  emailLogin: async () => {},
+  emailSignup: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -86,8 +90,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
   };
 
+  const emailLogin = async (email: string, pass: string) => {
+    const apiUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:9000';
+    const res = await fetch(`${apiUrl}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pass })
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(()=>({}));
+      throw new Error(data.detail || 'Login failed');
+    }
+    const data = await res.json();
+    localStorage.setItem('auth_token', data.access_token);
+    setToken(data.access_token);
+    await fetchUser(data.access_token);
+  };
+
+  const emailSignup = async (email: string, pass: string) => {
+    const apiUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:9000';
+    const res = await fetch(`${apiUrl}/auth/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pass })
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(()=>({}));
+      throw new Error(data.detail || 'Signup failed');
+    }
+    const data = await res.json();
+    localStorage.setItem('auth_token', data.access_token);
+    setToken(data.access_token);
+    await fetchUser(data.access_token);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, logout, emailLogin, emailSignup }}>
       {children}
     </AuthContext.Provider>
   );
