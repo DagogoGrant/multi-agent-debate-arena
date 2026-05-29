@@ -17,9 +17,17 @@ app = FastAPI()
 import models
 from database import engine
 from auth import auth_router
+from sqlalchemy import text
 
 # Create SQLite tables if they don't exist
 models.Base.metadata.create_all(bind=engine)
+
+# Hotfix for Render: Add the hashed_password column if it doesn't exist
+try:
+    with engine.begin() as conn:
+        conn.execute(text("ALTER TABLE users ADD COLUMN hashed_password VARCHAR"))
+except Exception:
+    pass
 
 app.include_router(auth_router)
 
