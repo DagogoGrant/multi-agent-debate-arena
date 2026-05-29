@@ -33,7 +33,12 @@ const getAgentStyle = (stance: string) => {
   }
 };
 
-export default function App() {
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import LoginScreen from './components/LoginScreen';
+import { Loader2 } from 'lucide-react';
+
+function AppContent() {
+  const { user, loading } = useAuth();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [topic, setTopic] = useState('Acquire AI Startup Alpha for $500M.');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -512,6 +517,18 @@ export default function App() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0A0A0C] flex items-center justify-center">
+         <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <LoginScreen />;
+  }
+
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-background text-text-main">
       <Header 
@@ -726,5 +743,13 @@ export default function App() {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }

@@ -14,6 +14,15 @@ import urllib.error
 
 app = FastAPI()
 
+import models
+from database import engine
+from auth import auth_router
+
+# Create SQLite tables if they don't exist
+models.Base.metadata.create_all(bind=engine)
+
+app.include_router(auth_router)
+
 # Enable CORS for the React frontend
 app.add_middleware(
     CORSMiddleware,
