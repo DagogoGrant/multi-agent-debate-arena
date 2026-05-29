@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { X, Key, Cpu, AlertCircle, Check, Loader2, Play } from 'lucide-react';
+import { X, Key, Cpu, AlertCircle, Check, Loader2, Play, Cloud } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../contexts/AuthContext';
 
