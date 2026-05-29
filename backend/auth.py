@@ -112,30 +112,35 @@ async def google_callback(request: Request, db: Session = Depends(get_db)):
         headers={"Location": f"{frontend_url}/#access_token={access_token}"}
     )
 
+import traceback
+
 @auth_router.post("/signup")
 async def signup(user_data: UserAuth, db: Session = Depends(get_db)):
-    """Handles standard email/password signup"""
-    user = db.query(models.User).filter(models.User.email == user_data.email).first()
-    if user:
-        raise HTTPException(status_code=400, detail="Email already registered")
+    try:
+        user = db.query(models.User).filter(models.User.email == user_data.email).first()
+        if user:
+            raise HTTPException(status_code=400, detail="Email already registered")
+            
+        hashed_pwd = get_password_hash(user_data.password)
+        default_name = user_data.email.split('@')[0]
         
-    hashed_pwd = get_password_hash(user_data.password)
-    # Give them a default name based on their email prefix
-    default_name = user_data.email.split('@')[0]
-    
-    new_user = models.User(
-        email=user_data.email,
-        name=default_name.capitalize(),
-        hashed_password=hashed_pwd
-    )
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    
-    access_token = create_access_token(
-        data={"sub": new_user.email}, expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    )
-    return {"access_token": access_token, "token_type": "bearer"}
+        new_user = models.User(
+            email=user_data.email,
+            name=default_name.capitalize(),
+            hashed_password=hashed_pwd
+        )
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+        
+        access_token = create_access_token(
+            data={"sub": new_user.email}, expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        )
+        return {"access_token": access_token, "token_type": "bearer"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        return Response(status_code=500, content=traceback.format_exc())
 
 @auth_router.post("/login")
 async def login(user_data: UserAuth, db: Session = Depends(get_db)):
