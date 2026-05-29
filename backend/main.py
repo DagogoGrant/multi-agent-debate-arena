@@ -29,10 +29,15 @@ try:
 except Exception:
     pass
 
-# Hotfix: Add sharing columns if they don't exist
+# Hotfix: Add sharing columns if they don't exist (must be separate blocks for SQLite)
 try:
     with engine.begin() as conn:
         conn.execute(text("ALTER TABLE debate_sessions ADD COLUMN is_public BOOLEAN DEFAULT 0"))
+except Exception:
+    pass
+
+try:
+    with engine.begin() as conn:
         conn.execute(text("ALTER TABLE debate_sessions ADD COLUMN share_id VARCHAR"))
 except Exception:
     pass
