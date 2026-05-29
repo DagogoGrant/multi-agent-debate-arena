@@ -109,7 +109,8 @@ export default function App() {
       const configuredAgents = config.agents.map((agent: any) => {
          let key = "";
          let baseUrl = null;
-         let provider = agent.provider;
+         let provider = agent.provider || localStorage.getItem('global_provider') || 'ollama';
+         let model = agent.model || localStorage.getItem(`${provider}_default_model`) || 'llama3.2:3b';
          
          if (provider === 'openai') key = openaiKey || "";
          if (provider === 'anthropic') key = anthropicKey || "";
@@ -120,11 +121,11 @@ export default function App() {
              provider = 'openai'; // LiteLLM handles OpenAI compatible under openai provider
              key = customKey || "";
              baseUrl = customBaseUrl || null;
-         } else if (provider === 'ollama' || !provider) {
+         } else if (provider === 'ollama') {
              baseUrl = ollamaBaseUrl;
          }
          
-         return { ...agent, provider, api_key: key, base_url: baseUrl };
+         return { ...agent, provider, model, api_key: key, base_url: baseUrl };
       });
 
       const response = await fetch(`${API_BASE}/api/debate`, {

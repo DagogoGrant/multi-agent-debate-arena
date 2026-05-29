@@ -92,6 +92,9 @@ export default function SettingsModal({ isOpen, onClose, config, setConfig }: Se
     // Store generic settings if needed
     if (model) localStorage.setItem(`${pType}_default_model`, model);
     
+    // Set this as the active global provider so the agents use it!
+    localStorage.setItem('global_provider', pType);
+    
     onClose();
   };
 
