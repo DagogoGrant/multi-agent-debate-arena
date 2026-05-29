@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Search, 
   ChevronDown, 
@@ -11,9 +11,11 @@ import {
   TrendingUp,
   Sun,
   Moon,
-  User
+  User,
+  LogOut
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { useAuth } from '../contexts/AuthContext';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -27,6 +29,8 @@ interface HeaderProps {
 }
 
 export default function Header({ onMenuClick, onSettingsClick, topic, setTopic, onLaunch, isStreaming, theme, toggleTheme }: HeaderProps) {
+  const { user, logout } = useAuth();
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   return (
     <header className="h-16 flex items-center justify-between px-4 lg:px-6 border-b border-divider bg-background/80 backdrop-blur-md z-20">
       <div className="flex items-center gap-3 lg:gap-4 flex-1 max-w-2xl">
@@ -83,8 +87,44 @@ export default function Header({ onMenuClick, onSettingsClick, topic, setTopic, 
 
         <div className="flex items-center gap-2 lg:gap-3 border-l border-divider pl-2 lg:pl-4 text-text-muted">
           <Bell className="w-5 h-5 cursor-pointer hover:text-text-main transition-colors hidden xs:block" />
-          <div className="w-8 h-8 rounded-full border border-divider overflow-hidden cursor-pointer hover:border-violet-500/50 transition-colors flex items-center justify-center bg-black/5 dark:bg-white/5 text-text-muted hover:text-text-main">
-            <User className="w-4 h-4" />
+          
+          <div className="relative">
+            <div 
+              onClick={() => setShowProfileMenu(!showProfileMenu)}
+              className="w-8 h-8 rounded-full border border-divider overflow-hidden cursor-pointer hover:border-violet-500/50 transition-colors flex items-center justify-center bg-black/5 dark:bg-white/5 text-text-muted hover:text-text-main relative z-50"
+            >
+              {user?.picture ? (
+                <img src={user.picture} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <User className="w-4 h-4" />
+              )}
+            </div>
+
+            {showProfileMenu && (
+              <>
+                <div 
+                  className="fixed inset-0 z-40" 
+                  onClick={() => setShowProfileMenu(false)}
+                />
+                <div className="absolute right-0 mt-3 w-56 bg-background/95 backdrop-blur-xl border border-divider rounded-2xl shadow-2xl p-2 z-50 origin-top-right animate-in fade-in zoom-in-95 duration-200">
+                  <div className="px-3 py-3 border-b border-divider/50 mb-2">
+                    <div className="text-sm font-bold text-text-main truncate">{user?.name || 'User'}</div>
+                    <div className="text-xs text-text-muted truncate mt-0.5">{user?.email || ''}</div>
+                  </div>
+                  
+                  <button 
+                    onClick={() => {
+                      setShowProfileMenu(false);
+                      logout();
+                    }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors group"
+                  >
+                    <LogOut className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+                    Sign Out
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
