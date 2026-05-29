@@ -12,6 +12,7 @@ interface SettingsModalProps {
 
 export default function SettingsModal({ isOpen, onClose, config, setConfig }: SettingsModalProps) {
   const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
+  const [availableModels, setAvailableModels] = useState<string[]>([]);
 
   const [providerType, setProviderType] = useState('OpenAI');
   const [providerName, setProviderName] = useState('');
@@ -37,7 +38,22 @@ export default function SettingsModal({ isOpen, onClose, config, setConfig }: Se
       const res = await fetch(`${baseUrl}/models`, {
         headers: { 'Authorization': `Bearer ${apiKey}` }
       });
-      if (res.ok) setTestStatus('success');
+      if (res.ok) {
+        setTestStatus('success');
+        try {
+          const data = await res.json();
+          // Support OpenAI standard (data.data) and Ollama/others (Array or data.models)
+          if (data.data && Array.isArray(data.data)) {
+            setAvailableModels(data.data.map((m: any) => m.id));
+          } else if (Array.isArray(data)) {
+            setAvailableModels(data.map((m: any) => m.name || m.id));
+          } else if (data.models && Array.isArray(data.models)) {
+            setAvailableModels(data.models.map((m: any) => m.name || m.id));
+          }
+        } catch (e) {
+          console.error("Failed to parse models response", e);
+        }
+      }
       else setTestStatus('error');
     } catch {
       setTestStatus('error');
@@ -121,13 +137,21 @@ export default function SettingsModal({ isOpen, onClose, config, setConfig }: Se
           <div>
             <label className="block text-sm font-semibold text-slate-300 mb-2">Model *</label>
             {['Custom', 'Ollama'].includes(providerType) ? (
-              <input 
-                type="text" 
-                value={model}
-                onChange={e => setModel(e.target.value)}
-                placeholder="e.g., opencode-32b, deepseek-coder..."
-                className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500"
-              />
+              <>
+                <input 
+                  type="text" 
+                  list="fetched-models"
+                  value={model}
+                  onChange={e => setModel(e.target.value)}
+                  placeholder="e.g., opencode-32b, deepseek-coder..."
+                  className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500"
+                />
+                {availableModels.length > 0 && (
+                  <datalist id="fetched-models">
+                    {availableModels.map(m => <option key={m} value={m} />)}
+                  </datalist>
+                )}
+              </>
             ) : (
               <div className="relative">
                 <select 
