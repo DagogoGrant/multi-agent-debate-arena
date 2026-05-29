@@ -9,6 +9,9 @@ from typing import List, Optional
 from agents import DynamicAgent
 from utils import WebSearcher, parse_metadata, HistoryLogger
 
+import urllib.request
+import urllib.error
+
 app = FastAPI()
 
 # Enable CORS for the React frontend
@@ -19,6 +22,29 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.post("/api/proxy/models")
+async def proxy_models(request: Request):
+    try:
+        data = await request.json()
+        base_url = data.get("base_url")
+        api_key = data.get("api_key", "")
+        
+        if not base_url:
+            return {"error": "base_url required"}
+            
+        url = f"{base_url.rstrip('/')}/models"
+        req = urllib.request.Request(url, headers={"Authorization": f"Bearer {api_key}"})
+        
+        with urllib.request.urlopen(req, timeout=10) as response:
+            result = json.loads(response.read().decode('utf-8'))
+            return result
+    except urllib.error.HTTPError as e:
+        return {"error": f"HTTP Error {e.code}: {e.reason}"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
 
 @app.get("/")
 async def health_check():

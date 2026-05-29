@@ -35,27 +35,38 @@ export default function SettingsModal({ isOpen, onClose, config, setConfig }: Se
     if (!baseUrl) return;
     setTestStatus('testing');
     try {
-      const res = await fetch(`${baseUrl}/models`, {
-        headers: { 'Authorization': `Bearer ${apiKey}` }
+      const apiUrl = (import.meta as any).env?.VITE_API_URL || 'http://localhost:9000';
+      const res = await fetch(`${apiUrl}/api/proxy/models`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ base_url: baseUrl, api_key: apiKey })
       });
+      
       if (res.ok) {
-        setTestStatus('success');
-        try {
-          const data = await res.json();
-          // Support OpenAI standard (data.data) and Ollama/others (Array or data.models)
-          if (data.data && Array.isArray(data.data)) {
-            setAvailableModels(data.data.map((m: any) => m.id));
-          } else if (Array.isArray(data)) {
-            setAvailableModels(data.map((m: any) => m.name || m.id));
-          } else if (data.models && Array.isArray(data.models)) {
-            setAvailableModels(data.models.map((m: any) => m.name || m.id));
+        const data = await res.json();
+        if (data.error) {
+          console.error("Proxy error:", data.error);
+          setTestStatus('error');
+        } else {
+          setTestStatus('success');
+          try {
+            // Support OpenAI standard (data.data) and Ollama/others (Array or data.models)
+            if (data.data && Array.isArray(data.data)) {
+              setAvailableModels(data.data.map((m: any) => m.id));
+            } else if (Array.isArray(data)) {
+              setAvailableModels(data.map((m: any) => m.name || m.id));
+            } else if (data.models && Array.isArray(data.models)) {
+              setAvailableModels(data.models.map((m: any) => m.name || m.id));
+            }
+          } catch (e) {
+            console.error("Failed to parse models response", e);
           }
-        } catch (e) {
-          console.error("Failed to parse models response", e);
         }
+      } else {
+        setTestStatus('error');
       }
-      else setTestStatus('error');
-    } catch {
+    } catch (err) {
+      console.error("Test connection failed:", err);
       setTestStatus('error');
     }
     setTimeout(() => setTestStatus('idle'), 3000);
