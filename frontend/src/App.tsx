@@ -669,8 +669,6 @@ function AppContent() {
                 </div>
                 
                 <div className="flex-1 rounded-3xl border border-divider bg-card overflow-hidden relative p-4 shadow-sm">
-                   {/* Background Grid Pattern */}
-                   <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 dark:opacity-10 mix-blend-overlay pointer-events-none" />
                    <LogicMap messages={messages} topic={topic} />
                 </div>
               </motion.div>

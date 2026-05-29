@@ -135,8 +135,7 @@ export default function MainCanvas({ messages, isStreaming, currentAgent, onCont
                <motion.div 
                  animate={{ scale: [0.95, 1.05, 0.95], opacity: [0.7, 1, 0.7] }}
                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                 whileHover={{ scale: 1.15, rotate: 90 }}
-                 className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl sm:rounded-[2rem] bg-violet-500/10 border border-violet-500/30 flex items-center justify-center shadow-[0_0_50px_rgba(139,92,246,0.2)] backdrop-blur-md z-10 cursor-pointer"
+                 className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl sm:rounded-[2rem] bg-violet-500/10 border border-violet-500/30 flex items-center justify-center shadow-[0_0_50px_rgba(139,92,246,0.2)] z-10 cursor-pointer"
                >
                  <Cpu className="w-8 h-8 sm:w-10 sm:h-10 text-violet-400" />
                </motion.div>
@@ -192,7 +191,7 @@ export default function MainCanvas({ messages, isStreaming, currentAgent, onCont
 
       {/* Debate Timeline (Bottom) */}
       <div className="px-4 sm:px-6 pt-2 pb-0">
-        <div className="w-full bg-card/60 backdrop-blur-md rounded-2xl border border-divider p-4 flex flex-col gap-4 shadow-sm">
+        <div className="w-full bg-card rounded-2xl border border-divider p-4 flex flex-col gap-4 shadow-sm">
            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
@@ -232,7 +231,7 @@ export default function MainCanvas({ messages, isStreaming, currentAgent, onCont
 
       {/* Input Area */}
       <div className="p-4 sm:p-6 mt-auto">
-        <div className="bg-card/80 dark:bg-black/40 backdrop-blur-md rounded-2xl sm:rounded-3xl border border-divider p-1.5 sm:p-2 flex flex-col gap-1.5 sm:gap-2 shadow-2xl">
+        <div className="bg-card dark:bg-card rounded-2xl sm:rounded-3xl border border-divider p-1.5 sm:p-2 flex flex-col gap-1.5 sm:gap-2 shadow-2xl">
           <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 border-b border-divider">
              <MessageSquare className="w-3.5 h-3.5 sm:w-4 h-4 text-text-muted" />
              <input 
