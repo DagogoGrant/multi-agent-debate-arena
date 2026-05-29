@@ -103,21 +103,7 @@ export default function Sidebar({ onClose, config, setConfig, currentAgent, temp
           </button>
         )}
         
-        {/* User Profile */}
-        {user && (
-          <div className="flex items-center justify-between p-3 rounded-2xl bg-black/5 dark:bg-white/[0.02] border border-divider">
-            <div className="flex items-center gap-3">
-              <img src={user.picture || `https://ui-avatars.com/api/?name=${user.name}`} alt={user.name} className="w-8 h-8 rounded-full border border-divider" />
-              <div className="flex flex-col">
-                <span className="text-[12px] font-bold text-text-main leading-tight">{user.name}</span>
-                <span className="text-[10px] text-text-muted">{user.email}</span>
-              </div>
-            </div>
-            <button onClick={logout} className="text-[10px] px-2 py-1 bg-black/10 dark:bg-white/10 hover:bg-red-500/20 hover:text-red-400 rounded-md transition-colors text-text-muted font-bold">
-              Logout
-            </button>
-          </div>
-        )}
+
         {/* Agents Section */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
