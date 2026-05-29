@@ -72,6 +72,29 @@ export default function SettingsModal({ isOpen, onClose, config, setConfig }: Se
     setTimeout(() => setTestStatus('idle'), 3000);
   };
 
+  const handleSave = () => {
+    const pType = providerType.toLowerCase();
+    if (pType === 'openai') {
+      localStorage.setItem('openai_api_key', apiKey);
+    } else if (pType === 'anthropic') {
+      localStorage.setItem('anthropic_api_key', apiKey);
+    } else if (pType === 'gemini') {
+      localStorage.setItem('gemini_api_key', apiKey);
+    } else if (pType === 'custom') {
+      localStorage.setItem('custom_api_key', apiKey);
+      localStorage.setItem('custom_base_url', baseUrl);
+      if (model) localStorage.setItem('custom_default_model', model);
+    } else if (pType === 'ollama') {
+      localStorage.setItem('ollama_base_url', baseUrl);
+      if (model) localStorage.setItem('ollama_default_model', model);
+    }
+    
+    // Store generic settings if needed
+    if (model) localStorage.setItem(`${pType}_default_model`, model);
+    
+    onClose();
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -248,7 +271,10 @@ export default function SettingsModal({ isOpen, onClose, config, setConfig }: Se
                testStatus === 'error' ? <span className="text-red-400">Failed</span> : 
                "Test"}
             </button>
-            <button className="px-6 py-2.5 rounded-lg text-sm font-semibold bg-violet-600 text-white hover:bg-violet-500 transition-colors shadow-sm">
+            <button 
+              onClick={handleSave}
+              className="px-6 py-2.5 rounded-lg text-sm font-semibold bg-violet-600 text-white hover:bg-violet-500 transition-colors shadow-sm"
+            >
               Save
             </button>
           </div>
