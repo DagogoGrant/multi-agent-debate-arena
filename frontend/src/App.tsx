@@ -6,6 +6,9 @@ import IntelligenceLab from './components/IntelligenceLab';
 import RecentDebates from './components/RecentDebates';
 import LogicMap from './components/LogicMap';
 import SettingsModal from './components/SettingsModalV2';
+import LandingPage from './components/LandingPage';
+import ExecutiveBrief from './components/ExecutiveBrief';
+import ArgumentCards from './components/ArgumentCards';
 import { cn } from './lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { Network, Database, Briefcase, Zap, Cpu, ArrowRight } from 'lucide-react';
@@ -45,7 +48,7 @@ function AppContent() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [currentAgent, setCurrentAgent] = useState('');
   const [activeView, setActiveView] = useState('canvas');
-  const [canvasTab, setCanvasTab] = useState('arena');
+  const [canvasTab, setCanvasTab] = useState<'brief' | 'arguments' | 'logic' | 'transcript'>('transcript');
   const [isSettingsOpen, setSettingsOpen] = useState(false);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
   const [currentDebateId, setCurrentDebateId] = useState<string | null>(null);
@@ -607,29 +610,47 @@ function AppContent() {
                 transition={{ duration: 0.2 }}
                 className="absolute inset-0 flex flex-col"
               >
-                <div className="absolute top-4 left-4 z-10 flex gap-2">
-                  <button 
-                    onClick={() => setCanvasTab('arena')}
-                    className={cn("px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm", canvasTab === 'arena' ? "bg-violet-600 text-white" : "bg-black/5 dark:bg-white/5 text-text-muted hover:text-text-main")}
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 flex items-center p-1 bg-card/80 border border-divider rounded-2xl sm:rounded-[2rem] shadow-sm backdrop-blur-md">
+                  <button
+                    onClick={() => setCanvasTab('brief')}
+                    className={cn(
+                      "px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl sm:rounded-3xl text-[10px] sm:text-xs font-bold tracking-wide uppercase transition-all",
+                      canvasTab === 'brief' ? "bg-violet-500 text-white shadow-lg shadow-violet-500/25" : "text-text-muted hover:text-text-main"
+                    )}
                   >
-                    Live Arena
+                    1. Brief
                   </button>
-                  <button 
-                    onClick={() => setCanvasTab('lab')}
-                    className={cn("px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm", canvasTab === 'lab' ? "bg-violet-600 text-white" : "bg-black/5 dark:bg-white/5 text-text-muted hover:text-text-main")}
+                  <button
+                    onClick={() => setCanvasTab('arguments')}
+                    className={cn(
+                      "px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl sm:rounded-3xl text-[10px] sm:text-xs font-bold tracking-wide uppercase transition-all",
+                      canvasTab === 'arguments' ? "bg-violet-500 text-white shadow-lg shadow-violet-500/25" : "text-text-muted hover:text-text-main"
+                    )}
                   >
-                    Intelligence Lab
+                    2. Arguments
                   </button>
-                  <button 
-                    onClick={() => setCanvasTab('network')}
-                    className={cn("px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm", canvasTab === 'network' ? "bg-violet-600 text-white" : "bg-black/5 dark:bg-white/5 text-text-muted hover:text-text-main")}
+                  <button
+                    onClick={() => setCanvasTab('logic')}
+                    className={cn(
+                      "px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl sm:rounded-3xl text-[10px] sm:text-xs font-bold tracking-wide uppercase transition-all",
+                      canvasTab === 'logic' ? "bg-violet-500 text-white shadow-lg shadow-violet-500/25" : "text-text-muted hover:text-text-main"
+                    )}
                   >
-                    Logic Network
+                    3. Graph
+                  </button>
+                  <button
+                    onClick={() => setCanvasTab('transcript')}
+                    className={cn(
+                      "px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl sm:rounded-3xl text-[10px] sm:text-xs font-bold tracking-wide uppercase transition-all",
+                      canvasTab === 'transcript' ? "bg-violet-500 text-white shadow-lg shadow-violet-500/25" : "text-text-muted hover:text-text-main"
+                    )}
+                  >
+                    4. Transcript
                   </button>
                 </div>
 
                 <div className="flex-1 flex min-h-0 overflow-hidden mt-16 relative">
-                  {canvasTab === 'arena' ? (
+                  {canvasTab === 'transcript' ? (
                      <MainCanvas 
                       messages={messages} 
                       isStreaming={isStreaming}
@@ -638,10 +659,12 @@ function AppContent() {
                       onShare={currentDebateId ? handleShare : undefined}
                       shareId={shareId}
                     />
-                  ) : canvasTab === 'lab' ? (
-                     <IntelligenceLab metrics={metrics} />
-                  ) : (
+                  ) : canvasTab === 'logic' ? (
                      <LogicMap messages={messages} topic={topic} />
+                  ) : canvasTab === 'brief' ? (
+                     <ExecutiveBrief messages={messages} isStreaming={isStreaming} />
+                  ) : (
+                     <ArgumentCards messages={messages} />
                   )}
                 </div>
               </motion.div>
