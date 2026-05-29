@@ -120,20 +120,46 @@ export default function SettingsModal({ isOpen, onClose, config, setConfig }: Se
 
           <div>
             <label className="block text-sm font-semibold text-slate-300 mb-2">Model *</label>
-            <div className="relative">
-              <select 
+            {['Custom', 'Ollama'].includes(providerType) ? (
+              <input 
+                type="text" 
                 value={model}
                 onChange={e => setModel(e.target.value)}
-                className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 appearance-none"
-              >
-                <option value="">Select a model...</option>
-                <option value="gpt-4o">gpt-4o</option>
-                <option value="claude-3-5-sonnet">claude-3-5-sonnet</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                placeholder="e.g., opencode-32b, deepseek-coder..."
+                className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500"
+              />
+            ) : (
+              <div className="relative">
+                <select 
+                  value={model}
+                  onChange={e => setModel(e.target.value)}
+                  className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 appearance-none"
+                >
+                  <option value="">Select a model...</option>
+                  {providerType === 'OpenAI' && (
+                    <>
+                      <option value="gpt-4o">gpt-4o</option>
+                      <option value="gpt-4o-mini">gpt-4o-mini</option>
+                    </>
+                  )}
+                  {providerType === 'Anthropic' && (
+                    <>
+                      <option value="claude-3-5-sonnet-latest">claude-3-5-sonnet-latest</option>
+                      <option value="claude-3-opus-latest">claude-3-opus-latest</option>
+                    </>
+                  )}
+                  {providerType === 'Gemini' && (
+                    <>
+                      <option value="gemini-1.5-pro">gemini-1.5-pro</option>
+                      <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+                    </>
+                  )}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <div className="pt-6 border-t border-white/10 mt-8">
