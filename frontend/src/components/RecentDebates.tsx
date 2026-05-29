@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight, Play, Database, History, Calendar, CheckCircle2 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { useAuth } from '../contexts/AuthContext';
 
 interface RecentDebatesProps {
   onLoadDebate?: (id: string) => void;
@@ -9,13 +10,22 @@ interface RecentDebatesProps {
 
 export default function RecentDebates({ onLoadDebate, fullView = false }: RecentDebatesProps) {
   const [history, setHistory] = React.useState<any[]>([]);
+  const { token } = useAuth();
 
   React.useEffect(() => {
-    fetch('http://localhost:9000/api/history')
+    if (!token) return;
+    const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:9000';
+    fetch(`${API_BASE}/api/history`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then(res => res.json())
-      .then(data => setHistory(data))
+      .then(data => {
+        if (Array.isArray(data)) setHistory(data);
+      })
       .catch(err => console.error("Failed to fetch history:", err));
-  }, []);
+  }, [token]);
 
   return (
     <section className={cn(

@@ -92,35 +92,35 @@ async def get_templates():
     with open("templates.json", "r") as f:
         return json.load(f)
 
+from auth import get_current_user
+from database import get_db
+from sqlalchemy.orm import Session
+from fastapi import Depends
+
 @app.get("/api/history")
-async def get_history():
-    history_dir = "history"
-    if not os.path.exists(history_dir):
-        os.makedirs(history_dir, exist_ok=True)
-        return []
-    files = [f for f in os.listdir(history_dir) if f.endswith(".json")]
+async def get_history(current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    sessions = db.query(models.DebateSession).filter(models.DebateSession.user_id == current_user.id).order_by(models.DebateSession.created_at.desc()).all()
+    
     history = []
-    for f in files:
-        try:
-            with open(os.path.join(history_dir, f), "r") as file:
-                data = json.load(file)
-                history.append({
-                    "id": f,
-                    "topic": data.get("topic", "Unknown"),
-                    "date": f.replace("debate_", "").replace(".json", ""),
-                    "status": "COMPLETED"
-                })
-        except: continue
-    return sorted(history, key=lambda x: x["date"], reverse=True)
+    for s in sessions:
+        history.append({
+            "id": str(s.id),
+            "topic": s.topic,
+            "date": s.created_at.strftime("%Y%m%d_%H%M%S"),
+            "status": "COMPLETED"
+        })
+    return history
 
 @app.get("/api/history/{debate_id}")
-async def get_debate_detail(debate_id: str):
-    history_dir = "history"
-    file_path = os.path.join(history_dir, debate_id)
-    if not os.path.exists(file_path):
+async def get_debate_detail(debate_id: int, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    session = db.query(models.DebateSession).filter(models.DebateSession.id == debate_id, models.DebateSession.user_id == current_user.id).first()
+    if not session:
         return {"error": "Debate not found"}
-    with open(file_path, "r") as file:
-        return json.load(file)
+        
+    return {
+        "topic": session.topic,
+        "transcript": json.loads(session.transcript) if session.transcript else []
+    }
 
 from auth import get_current_user
 
@@ -225,9 +225,21 @@ async def debate_stream(config: SessionConfig, current_user: models.User = Depen
                 transcript.append((ag.name, full_a))
                 yield {"event": "agent_end", "data": json.dumps({"agent": ag.name, "full_text": full_a})}
         
-        # Save to history
-        logger = HistoryLogger()
-        logger.save_debate(config.topic, transcript)
+        # Save to history database instead of local files
+        from database import SessionLocal
+        db = SessionLocal()
+        try:
+            db_session = models.DebateSession(
+                user_id=current_user.id,
+                topic=config.topic,
+                transcript=json.dumps(transcript)
+            )
+            db.add(db_session)
+            db.commit()
+        except Exception as e:
+            print("Failed to save debate to DB:", e)
+        finally:
+            db.close()
         
         yield {"event": "complete", "data": "Debate finalized."}
 

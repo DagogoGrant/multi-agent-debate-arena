@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
+from sqlalchemy.orm import relationship
+import datetime
 from database import Base
 
 class User(Base):
@@ -21,3 +23,17 @@ class User(Base):
     
     # Simple boolean flag to track if they linked google as a provider
     is_google_linked = Column(Boolean, default=False)
+    
+    # Relationships
+    debates = relationship("DebateSession", back_populates="user")
+
+class DebateSession(Base):
+    __tablename__ = "debate_sessions"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    topic = Column(String, index=True)
+    transcript = Column(String) # Stored as JSON string
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    
+    user = relationship("User", back_populates="debates")

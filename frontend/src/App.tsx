@@ -398,7 +398,11 @@ function AppContent() {
 
   const loadDebate = async (id: string) => {
     try {
-      const res = await fetch(`${API_BASE}/api/history/${id}`);
+      const res = await fetch(`${API_BASE}/api/history/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       const data = await res.json();
       setTopic(data.topic);
       setMessages(data.transcript.map((t: any) => ({
