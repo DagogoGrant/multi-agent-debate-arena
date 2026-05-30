@@ -43,6 +43,7 @@ class LLMClient:
             "model": litellm_model,
             "messages": messages,
             "stream": stream,
+            "timeout": 180, # Prevent hanging forever on large context
         }
         
         if base_url:

@@ -184,7 +184,39 @@ export default function MainCanvas({ messages, isStreaming, currentAgent, onCont
                   </div>
                 </div>
               </motion.div>
-            ))
+            ))}
+            
+            {/* Streaming 'Thinking' Indicator */}
+            {isStreaming && (
+              <motion.div 
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-5 rounded-3xl border border-divider bg-card shadow-sm w-full max-w-4xl mx-auto"
+              >
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full border border-divider shadow-sm bg-black/5 dark:bg-slate-800 flex items-center justify-center shrink-0">
+                    <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 border-violet-500 border-t-transparent animate-spin" />
+                  </div>
+                  <div className="flex-1 min-w-0 flex flex-col justify-center h-9 sm:h-11">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <span className="text-xs sm:text-sm font-bold text-text-main tracking-tight">
+                        {currentAgent.split(' ').slice(0, -1).join(' ') || currentAgent}
+                      </span>
+                      <span className="text-[7px] sm:text-[8px] px-1.5 sm:px-2 py-0.5 rounded-full font-black tracking-[0.1em] bg-violet-500/10 text-violet-500">
+                        PROCESSING
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <span className="w-1 h-1 bg-violet-500 rounded-full animate-pulse" style={{ animationDelay: '0ms' }} />
+                      <span className="w-1 h-1 bg-violet-500 rounded-full animate-pulse" style={{ animationDelay: '150ms' }} />
+                      <span className="w-1 h-1 bg-violet-500 rounded-full animate-pulse" style={{ animationDelay: '300ms' }} />
+                      <span className="text-[10px] text-text-muted ml-1">Synthesizing massive context window...</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+            </>
           )}
         </div>
       </div>
