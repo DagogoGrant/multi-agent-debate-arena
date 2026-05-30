@@ -47,6 +47,14 @@ export default function ExecutiveBrief({ messages, isStreaming }: ExecutiveBrief
       return score <= 100 ? score + '%' : 'Pending';
     }
     
+    // Look for scores like "91/100" or "91/100 vs 21/100"
+    const slashMatches = text.match(/\b(\d{1,3})\/100\b/g);
+    if (slashMatches) {
+      const scores = slashMatches.map(m => parseInt(m.split('/')[0]));
+      const maxScore = Math.max(...scores);
+      return maxScore <= 100 ? maxScore + '%' : 'Pending';
+    }
+    
     return 'Pending';
   };
 

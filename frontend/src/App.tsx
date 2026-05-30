@@ -591,6 +591,7 @@ function AppContent() {
             config={config}
             setConfig={setConfig}
             currentAgent={currentAgent}
+            isStreaming={isStreaming}
             templates={templates}
             selectedTemplateId={selectedTemplateId}
             setSelectedTemplateId={setSelectedTemplateId}

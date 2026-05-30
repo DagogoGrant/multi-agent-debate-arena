@@ -38,6 +38,7 @@ interface SidebarProps {
   config: any;
   setConfig: (config: any) => void;
   currentAgent: string;
+  isStreaming: boolean;
   templates: any[];
   selectedTemplateId: string;
   setSelectedTemplateId: (id: string) => void;
@@ -47,7 +48,7 @@ interface SidebarProps {
 
 import { useAuth } from '../contexts/AuthContext';
 
-export default function Sidebar({ onClose, config, setConfig, currentAgent, templates, selectedTemplateId, setSelectedTemplateId, activeView, setActiveView }: SidebarProps) {
+export default function Sidebar({ onClose, config, setConfig, currentAgent, isStreaming, templates, selectedTemplateId, setSelectedTemplateId, activeView, setActiveView }: SidebarProps) {
   const { user, logout } = useAuth();
   
   const getAvatar = (stance: string) => {
@@ -115,7 +116,9 @@ export default function Sidebar({ onClose, config, setConfig, currentAgent, temp
           </div>
           <div className="space-y-1.5">
             {config.agents?.map((agent: any) => {
-              const isThinking = currentAgent.includes(agent.name);
+              // Only show 'Thinking' if the stream is active
+              // Otherwise, everyone is 'Online' or 'Idle'
+              const isThinking = isStreaming && currentAgent.includes(agent.name);
               return (
                 <div key={agent.name} className="group p-2.5 rounded-2xl hover:bg-black/5 dark:hover:bg-white/[0.03] transition-all cursor-pointer flex items-center gap-3 border border-transparent hover:border-divider">
                   <div className="relative">
