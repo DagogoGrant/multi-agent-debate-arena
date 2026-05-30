@@ -203,84 +203,87 @@ async def debate_stream(config: SessionConfig, current_user: models.User = Depen
             )
         
         transcript = []
-
-        # 4. Opening Statement (NEUTRAL)
-        for ag in dynamic_agents:
-            if ag.stance == "NEUTRAL":
-                yield {"event": "status", "data": f"{ag.name} Opening..."}
-                full_intro = ""
-                async for chunk in ag.execute_task(config.topic, transcript, "introduce"):
-                    full_intro += chunk
-                    yield {"event": "delta", "data": json.dumps({"agent": ag.name, "text": chunk})}
-                transcript.append((ag.name, full_intro))
-                yield {"event": "agent_end", "data": json.dumps({"agent": ag.name, "full_text": full_intro})}
-
-        # 5. Debate Rounds (PRO / CONTRA)
-        for r in range(config.rounds):
-            for ag in dynamic_agents:
-                if ag.stance in ["PRO", "CONTRA"]:
-                    yield {"event": "status", "data": f"Round {r+1}: {ag.name} speaking..."}
-                    full_resp = ""
-                    async for chunk in ag.execute_task(config.topic, transcript, "respond"):
-                        full_resp += chunk
-                        yield {"event": "delta", "data": json.dumps({"agent": f"{ag.name} ({ag.stance})", "text": chunk})}
-                    
-                    m = parse_metadata(full_resp)
-                    transcript.append((f"{ag.name} ({ag.stance})", m["clean_text"]))
-                    yield {"event": "agent_end", "data": json.dumps({
-                        "agent": f"{ag.name} ({ag.stance})", 
-                        "full_text": m["clean_text"],
-                        "metadata": {"sentiment": m["sentiment"], "ttr": m["ttr"]}
-                    })}
-
-        # 6. Fact Check (AUDITOR)
-        for ag in dynamic_agents:
-            if ag.stance == "AUDITOR":
-                yield {"event": "status", "data": f"{ag.name} Cross-Referencing Facts..."}
-                full_f = ""
-                async for chunk in ag.execute_task(config.topic, transcript, "check_facts"):
-                    full_f += chunk
-                    yield {"event": "delta", "data": json.dumps({"agent": ag.name, "text": chunk})}
-                transcript.append((ag.name, full_f))
-                yield {"event": "agent_end", "data": json.dumps({"agent": ag.name, "full_text": full_f})}
-
-        # 7. Judgment (EXEC)
-        for ag in dynamic_agents:
-            if ag.stance == "EXEC":
-                yield {"event": "status", "data": f"{ag.name} Rendering Verdict..."}
-                full_j = ""
-                async for chunk in ag.execute_task(config.topic, transcript, "evaluate"):
-                    full_j += chunk
-                    yield {"event": "delta", "data": json.dumps({"agent": ag.name, "text": chunk})}
-                transcript.append((ag.name, full_j))
-                yield {"event": "agent_end", "data": json.dumps({"agent": ag.name, "full_text": full_j})}
-
-        # 8. Final Summary (ANALYST)
-        for ag in dynamic_agents:
-            if ag.stance == "ANALYST":
-                yield {"event": "status", "data": f"{ag.name} Generating Final Brief..."}
-                full_a = ""
-                async for chunk in ag.execute_task(config.topic, transcript, "summarize"):
-                    full_a += chunk
-                    yield {"event": "delta", "data": json.dumps({"agent": ag.name, "text": chunk})}
-                transcript.append((ag.name, full_a))
-                yield {"event": "agent_end", "data": json.dumps({"agent": ag.name, "full_text": full_a})}
-        
-        # Save to history database instead of local files
-        from database import SessionLocal
-        db = SessionLocal()
         try:
-            db_session = models.DebateSession(
-                user_id=current_user.id,
-                topic=config.topic,
-                transcript=json.dumps(transcript)
-            )
-            db.add(db_session)
-            db.commit()
-        except Exception as e:
-            print("Failed to save debate to DB:", e)
+
+            # 4. Opening Statement (NEUTRAL)
+            for ag in dynamic_agents:
+                if ag.stance == "NEUTRAL":
+                    yield {"event": "status", "data": f"{ag.name} Opening..."}
+                    full_intro = ""
+                    async for chunk in ag.execute_task(config.topic, transcript, "introduce"):
+                        full_intro += chunk
+                        yield {"event": "delta", "data": json.dumps({"agent": ag.name, "text": chunk})}
+                    transcript.append((ag.name, full_intro))
+                    yield {"event": "agent_end", "data": json.dumps({"agent": ag.name, "full_text": full_intro})}
+
+            # 5. Debate Rounds (PRO / CONTRA)
+            for r in range(config.rounds):
+                for ag in dynamic_agents:
+                    if ag.stance in ["PRO", "CONTRA"]:
+                        yield {"event": "status", "data": f"Round {r+1}: {ag.name} speaking..."}
+                        full_resp = ""
+                        async for chunk in ag.execute_task(config.topic, transcript, "respond"):
+                            full_resp += chunk
+                            yield {"event": "delta", "data": json.dumps({"agent": f"{ag.name} ({ag.stance})", "text": chunk})}
+                    
+                        m = parse_metadata(full_resp)
+                        transcript.append((f"{ag.name} ({ag.stance})", m["clean_text"]))
+                        yield {"event": "agent_end", "data": json.dumps({
+                            "agent": f"{ag.name} ({ag.stance})", 
+                            "full_text": m["clean_text"],
+                            "metadata": {"sentiment": m["sentiment"], "ttr": m["ttr"]}
+                        })}
+
+            # 6. Fact Check (AUDITOR)
+            for ag in dynamic_agents:
+                if ag.stance == "AUDITOR":
+                    yield {"event": "status", "data": f"{ag.name} Cross-Referencing Facts..."}
+                    full_f = ""
+                    async for chunk in ag.execute_task(config.topic, transcript, "check_facts"):
+                        full_f += chunk
+                        yield {"event": "delta", "data": json.dumps({"agent": ag.name, "text": chunk})}
+                    transcript.append((ag.name, full_f))
+                    yield {"event": "agent_end", "data": json.dumps({"agent": ag.name, "full_text": full_f})}
+
+            # 7. Judgment (EXEC)
+            for ag in dynamic_agents:
+                if ag.stance == "EXEC":
+                    yield {"event": "status", "data": f"{ag.name} Rendering Verdict..."}
+                    full_j = ""
+                    async for chunk in ag.execute_task(config.topic, transcript, "evaluate"):
+                        full_j += chunk
+                        yield {"event": "delta", "data": json.dumps({"agent": ag.name, "text": chunk})}
+                    transcript.append((ag.name, full_j))
+                    yield {"event": "agent_end", "data": json.dumps({"agent": ag.name, "full_text": full_j})}
+
+            # 8. Final Summary (ANALYST)
+            for ag in dynamic_agents:
+                if ag.stance == "ANALYST":
+                    yield {"event": "status", "data": f"{ag.name} Generating Final Brief..."}
+                    full_a = ""
+                    async for chunk in ag.execute_task(config.topic, transcript, "summarize"):
+                        full_a += chunk
+                        yield {"event": "delta", "data": json.dumps({"agent": ag.name, "text": chunk})}
+                    transcript.append((ag.name, full_a))
+                    yield {"event": "agent_end", "data": json.dumps({"agent": ag.name, "full_text": full_a})}
+        
         finally:
-            db.close()
+            if transcript:
+                # Save partial or full debate to history database
+                from database import SessionLocal
+                db = SessionLocal()
+                try:
+                    db_session = models.DebateSession(
+                        user_id=current_user.id,
+                        topic=config.topic,
+                        transcript=json.dumps(transcript)
+                    )
+                    db.add(db_session)
+                    db.commit()
+                except Exception as e:
+                    print("Failed to save debate to DB:", e)
+                finally:
+                    db.close()
         
         yield {"event": "complete", "data": "Debate finalized."}
 
