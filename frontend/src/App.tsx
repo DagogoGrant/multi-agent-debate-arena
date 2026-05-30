@@ -603,6 +603,7 @@ function AppContent() {
             setSelectedTemplateId={setSelectedTemplateId}
             activeView={activeView}
             setActiveView={setActiveView}
+            onSettingsClick={() => setSettingsOpen(true)}
           />
         </div>
 

@@ -44,11 +44,12 @@ interface SidebarProps {
   setSelectedTemplateId: (id: string) => void;
   activeView: string;
   setActiveView: (view: string) => void;
+  onSettingsClick?: () => void;
 }
 
 import { useAuth } from '../contexts/AuthContext';
 
-export default function Sidebar({ onClose, config, setConfig, currentAgent, isStreaming, templates, selectedTemplateId, setSelectedTemplateId, activeView, setActiveView }: SidebarProps) {
+export default function Sidebar({ onClose, config, setConfig, currentAgent, isStreaming, templates, selectedTemplateId, setSelectedTemplateId, activeView, setActiveView, onSettingsClick }: SidebarProps) {
   const { user, logout } = useAuth();
   
   const getAvatar = (stance: string) => {
@@ -186,16 +187,15 @@ export default function Sidebar({ onClose, config, setConfig, currentAgent, isSt
 
             <div className="space-y-2">
               <label className="text-[11px] text-text-muted font-medium">Primary LLM Engine</label>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-black/5 dark:bg-white/[0.02] border border-divider">
-                <select 
-                  value={config.pro_model}
-                  onChange={(e) => setConfig({ ...config, pro_model: e.target.value })}
-                  className="w-full bg-transparent border-none outline-none text-[11px] font-bold text-text-main"
-                >
-                  <option value="llama3.2:3b" className="bg-background">Llama 3.2 (3B)</option>
-                  <option value="llama3:8b" className="bg-background">Llama 3 (8B)</option>
-                  <option value="phi3" className="bg-background">Phi-3 Mini</option>
-                </select>
+              <div 
+                onClick={onSettingsClick}
+                className="flex items-center justify-between p-3 rounded-xl bg-black/5 dark:bg-white/[0.02] border border-divider hover:bg-black/10 dark:hover:bg-white/[0.04] transition-colors cursor-pointer group"
+              >
+                <div className="flex items-center gap-2.5 text-[11px] text-text-main font-bold">
+                  <Database className="w-3.5 h-3.5 text-text-muted group-hover:text-violet-500" />
+                  Configure LLMs
+                </div>
+                <Zap className="w-3.5 h-3.5 text-violet-500/50 group-hover:text-violet-500 transition-colors" />
               </div>
             </div>
 
