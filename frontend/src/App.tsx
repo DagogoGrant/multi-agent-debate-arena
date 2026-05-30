@@ -151,13 +151,19 @@ function AppContent() {
           rounds: config.rounds,
           web_grounding: config.web_grounding,
           agents: configuredAgents
-        }),
-        cache: 'no-cache'
+        })
       });
 
       if (!response.ok) {
-        const errorText = await response.text().catch(() => "No error details");
-        throw new Error(`Server Status ${response.status}: ${errorText}`);
+        const errText = await response.text();
+        if (response.status === 401) {
+          localStorage.removeItem('auth_token');
+          window.location.reload();
+          return;
+        }
+        alert(`Stream Error: Server Status ${response.status}: ${errText}`);
+        setIsStreaming(false);
+        return;
       }
 
       const reader = response.body?.getReader();
