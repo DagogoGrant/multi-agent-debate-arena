@@ -151,7 +151,8 @@ export default function MainCanvas({ messages, isStreaming, currentAgent, onCont
                </motion.div>
             </div>
           ) : (
-            messages.map((msg, i) => (
+            <>
+              {messages.map((msg, i) => (
               <motion.div 
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
